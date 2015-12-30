@@ -1,0 +1,50 @@
++keyframes(header-translateY)
+	0%
+		opacity: 0
+		transform: translateY(20px)
+	100%
+		opacity: 1
+		transform: translateY(0px)
+
++keyframes(fadeInOut)
+	0%
+		opacity: 0
+	50%
+		opacity: 1
+	100% 
+		opacity: 0
+
++keyframes(rotation)
+	0%
+		+transform(rotate(0deg))
+	100%
+		+transform(rotate(270deg))
+
++keyframes(turn)
+	0%
+		stroke-dashoffset: 187
+
+	50%
+		stroke-dashoffset: 46.75
+		-webkit-transform: rotate(135deg)
+		transform: rotate(135deg)
+
+	100%
+		stroke-dashoffset: 187
+		-webkit-transform: rotate(450deg)
+		transform: rotate(450deg)
+
+section.loading
+	text-align: center
+
+	h1 
+		margin: 0px 0px 10px 0px
+
+	.circle
+		stroke-dasharray: 187
+		stroke-dashoffset: 0
+		+transform-origin(center)
+		+animation(turn 1.4s ease-in-out infinite)
+
+	.spinner
+		+animation(rotation 1.4s linear infinite)

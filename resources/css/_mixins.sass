@@ -1,0 +1,44 @@
+
+=newImageObject($url, $width, $height, $clickable)
+	@if $clickable
+		cursor: pointer
+	
+	background: url(#{$url}) no-repeat
+	background-position: center center
+	background-size: 100%
+	width: #{$width}
+	height: #{$height}
+
+	border: 0
+
+=newInlineImageObject($url, $width, $height, $clickable)
+	@if $clickable
+		cursor: pointer
+
+	display: inline-block // uncomment this and break image alignment!
+	
+	background: url(#{$url}) no-repeat
+	background-position: center center
+	background-size: 100%
+	width: #{$width}
+	height: #{$height}
+
+	border: 0
+
+=newIconImageObject($url, $width, $height, $clickable)
+	@if $clickable
+		cursor: pointer
+
+	@media (max-width: $mobile)
+		width: 10vw
+		height: 10vw
+
+	display: inline-block // uncomment this and break image alignment!
+	
+	background: url(#{$url}) no-repeat
+	background-position: center center
+	background-size: 100%
+	width: #{$width}
+	height: #{$height}
+
+	border: 0
