@@ -19,7 +19,7 @@ You can use Layered instead of the original web client to remotely administrate 
 If you're just trying Layered out, it is recommended to set the TRANSMISSION_WEB_HOME environment variable to the root path of this web client. Then you just need to open the location to the transmission web server (e.g. localhost:9091) and it will work.
 
 ### Manual Installation
-Move the Layered files in the right location, and the next time you start Transmission, it will use Layered. If you're using the daemon, you can simply send it a `SIGHUB`.
+Move the Layered files in the right location, and the next time you start Transmission, it will use Layered. If you're using the daemon, you can simply send it a `SIGHUP`.
 
 #### Linux
 To use Layered, you may replace the contents of `/usr/share/transmission/web` with Layered.
