@@ -23,7 +23,7 @@ var Sidebar = {
 			$('section.torrent i.closeSidebar').fadeOut();
 
 			torrentElement.animate({
-				'top': $('body').scrollTop() + $('body').height(),
+				'top': '',
 			}, 300);
 
 			setTimeout(function() {
