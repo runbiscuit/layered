@@ -105,6 +105,7 @@ var Formatter = {
 	},
 
 	ratio: function(downloadedBytes, uploadedBytes) {
+		if (downloadedBytes == 0) return 0;
 		return Math.floor((uploadedBytes / downloadedBytes) * 1000) / 1000;
 	},
 
