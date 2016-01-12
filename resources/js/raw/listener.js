@@ -601,7 +601,7 @@ var Listener = {
 				method: 'torrent-remove',
 				arguments: {
 					'ids': ids,
-					'delete-local-data': $('section.removeTorrentFunctionality a#deleteAllData').prop('checked')
+					'delete-local-data': $('section.removeTorrentFunctionality input#deleteAllData').prop('checked')
 				}
 			}, function(response) {
 				toast('Success!', 500);
