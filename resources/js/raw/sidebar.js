@@ -23,10 +23,12 @@ var Sidebar = {
 			$('section.torrent i.closeSidebar').fadeOut();
 
 			torrentElement.animate({
-				'top': '',
+				'top': '100%',
 			}, 300);
 
 			setTimeout(function() {
+				TransmissionServer._waitLock = true;
+
 				torrentElement.children('section.card-action').fadeIn();
 				torrentElement.removeClass('stacked');
 				torrentElement.removeClass('hidden');
@@ -38,6 +40,8 @@ var Sidebar = {
 
 				$('section.torrent i.closeSidebar, section.sidebar h3 span.showOnMobile i.closeSidebar').unbind();
 				clearInterval(Sidebar.interval);
+
+				TransmissionServer._waitLock = false;
 			}, 300);
 		});
 
@@ -47,6 +51,8 @@ var Sidebar = {
 
 		Sidebar.refresh(id);
 		Sidebar.interval = setInterval(function() { Sidebar.refresh(id); }, 1000);
+
+		TransmissionServer._waitLock = false;
 	},
 
 	refresh: function(id) {

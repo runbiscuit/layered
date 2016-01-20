@@ -488,7 +488,9 @@ var Listener = {
 	getMoreTorrentDetails: function() {
 		$('section.torrents section.torrent a.getMoreDetails').unbind();
 
-		$('section.torrents section.torrent a.getMoreDetails').click(function() {
+		$('section.torrents section.torrent:not(.hidden) a.getMoreDetails, section.torrents.searchQuery section.torrent.result a.getMoreDetails').click(function() {
+			TransmissionServer._waitLock = true;
+
 			$('body').css('overflow', 'hidden');
 
 			var id = $(this).parent().parent().data('id');
@@ -658,6 +660,8 @@ var Listener = {
 					}			
 				});
 			}
+
+			Listener.getMoreTorrentDetails();
 		});
 	},
 
