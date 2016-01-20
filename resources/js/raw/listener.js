@@ -546,8 +546,8 @@ var Listener = {
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.uploaded').text(torrent.uploadedEver);
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.uploadRatio').text(torrent.uploadRatio);
 
-					if ($('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css('width') != (torrent.percentageDone)) {
-						$('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').animate({ width: torrent.percentageDone + '%' }, 100);
+					if ($('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css('width') != torrent.percentageDone) {
+						$('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css({ width: torrent.percentageDone });
 					}
 
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"]').data('href', Listener.lastRefresh);
