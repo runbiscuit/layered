@@ -2,6 +2,8 @@ var TransmissionServer = {
 	_token: '',
 	_latestTorrentRefresh: 0,
 	_currentPage: 1,
+	_waitLock: false, // this will lock all update operations.
+	_downloadFolder: '',
 
 	sendServerRequest: function(data, callback) {
 		var remote = TransmissionServer;
@@ -22,7 +24,15 @@ var TransmissionServer = {
 			async: true
 		};
 
-		$.ajax(ajaxSettings);
+		if (TransmissionServer._waitLock) {
+			setTimeout(function() {
+				remote.sendServerRequest(data, callback);
+			}, 100);
+		}
+
+		else {
+			$.ajax(ajaxSettings);
+		}
 	},
 
 	ajaxErrorHandler: function(request, error_string, exception, ajaxObject) {

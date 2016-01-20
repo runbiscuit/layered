@@ -100,7 +100,26 @@ var Listener = {
 						}
 
 						else {
-							$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+							if (index == 'download-dir') {
+								$('section.settingsSidebar table').append('<tr data-spec="download-dir"><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+							}
+
+							else {
+								$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+							}
+						}
+
+						if (index == 'download-dir') {
+							TransmissionServer.sendServerRequest({
+								method: 'free-space',
+								arguments: {
+									'path': value
+								}
+							}, function(response) {
+								response = response.arguments;
+
+								$('<tr><td>download-dir-free-space</td><td><input disabled value="' + Formatter.size(response['size-bytes']) + '"></td></tr>').insertAfter($('section.settingsSidebar table tr[data-spec="download-dir"]'));
+							});
 						}
 					}
 				});
@@ -488,7 +507,9 @@ var Listener = {
 	getMoreTorrentDetails: function() {
 		$('section.torrents section.torrent a.getMoreDetails').unbind();
 
-		$('section.torrents section.torrent a.getMoreDetails').click(function() {
+		$('section.torrents section.torrent:not(.hidden) a.getMoreDetails, section.torrents.searchQuery section.torrent.result a.getMoreDetails').click(function() {
+			TransmissionServer._waitLock = true;
+
 			$('body').css('overflow', 'hidden');
 
 			var id = $(this).parent().parent().data('id');
@@ -546,8 +567,8 @@ var Listener = {
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.uploaded').text(torrent.uploadedEver);
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.uploadRatio').text(torrent.uploadRatio);
 
-					if ($('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css('width') != (torrent.percentageDone)) {
-						$('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').animate({ width: torrent.percentageDone + '%' }, 100);
+					if ($('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css('width') != torrent.percentageDone) {
+						$('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css({ width: torrent.percentageDone });
 					}
 
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"]').data('href', Listener.lastRefresh);
@@ -624,33 +645,42 @@ var Listener = {
 		$('section.search input.search').keyup(function() {
 			var value = $(this).val().toLowerCase();
 
-			$('section.torrents section.torrent').each(function(index, torrent) {
-				var torrentName = $(this).find('section.card-content h3.torrentName span.name').text().toLowerCase();
+			if (value.length == 0) {
+				$('section.torrents').removeClass('searchQuery').addClass(activeTab);
+			}
 
-				if (value.length == 0) {
-					$('section.search').animate({
-						'padding': '0 40px 15px'
-					}, 75);
+			else {
+				$('section.torrents section.torrent').each(function(index, torrent) {
+					var torrentName = $(this).find('section.card-content h3.torrentName span.name').text().toLowerCase();
 
-					$('section.torrentPagination').slideDown(75);
-				}
+					if (value.length == 0) {
+						$('section.search').animate({
+							'padding': '0 40px 15px'
+						}, 75);
 
-				else {
-					$('section.search').animate({
-						'padding': '15px 40px'
-					}, 75);
+						$('section.torrentPagination').slideDown(75);
+					}
 
-					$('section.torrentPagination').slideUp(75);
-				}
+					else {
+						$('section.search').animate({
+							'padding': '15px 40px'
+						}, 75);
 
-				if (torrentName.indexOf(value) != -1 || torrentName == '') {
-					$(this).removeClass('hidden');
-				}
+						$('section.torrentPagination').slideUp(75);
+					}
 
-				else {
-					$(this).addClass('hidden');
-				}			
-			});
+					if (torrentName.indexOf(value) != -1 || torrentName == '') {
+						$('section.torrents').removeClass('all downloading seeding idling paused errored').addClass('searchQuery');
+						$(this).addClass('result');
+					}
+
+					else {
+						$(this).removeClass('result');
+					}			
+				});
+			}
+
+			Listener.getMoreTorrentDetails();
 		});
 	},
 
