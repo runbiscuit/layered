@@ -1,7 +1,7 @@
+var activeTab = 'all';
+
 var filterBar = {
 	init: function() {
-		var activeTab = 'all';
-
 		$('section.header ul li').click(function() {
 			$('section.header ul li[data-href="' + activeTab + '"]').removeClass('active');
 			$(this).addClass('active');

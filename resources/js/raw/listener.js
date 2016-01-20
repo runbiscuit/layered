@@ -624,33 +624,40 @@ var Listener = {
 		$('section.search input.search').keyup(function() {
 			var value = $(this).val().toLowerCase();
 
-			$('section.torrents section.torrent').each(function(index, torrent) {
-				var torrentName = $(this).find('section.card-content h3.torrentName span.name').text().toLowerCase();
+			if (value.length == 0) {
+				$('section.torrents').removeClass('searchQuery').addClass(activeTab);
+			}
 
-				if (value.length == 0) {
-					$('section.search').animate({
-						'padding': '0 40px 15px'
-					}, 75);
+			else {
+				$('section.torrents section.torrent').each(function(index, torrent) {
+					var torrentName = $(this).find('section.card-content h3.torrentName span.name').text().toLowerCase();
 
-					$('section.torrentPagination').slideDown(75);
-				}
+					if (value.length == 0) {
+						$('section.search').animate({
+							'padding': '0 40px 15px'
+						}, 75);
 
-				else {
-					$('section.search').animate({
-						'padding': '15px 40px'
-					}, 75);
+						$('section.torrentPagination').slideDown(75);
+					}
 
-					$('section.torrentPagination').slideUp(75);
-				}
+					else {
+						$('section.search').animate({
+							'padding': '15px 40px'
+						}, 75);
 
-				if (torrentName.indexOf(value) != -1 || torrentName == '') {
-					$(this).removeClass('hidden');
-				}
+						$('section.torrentPagination').slideUp(75);
+					}
 
-				else {
-					$(this).addClass('hidden');
-				}			
-			});
+					if (torrentName.indexOf(value) != -1 || torrentName == '') {
+						$('section.torrents').removeClass('all downloading seeding idling paused errored').addClass('searchQuery');
+						$(this).addClass('result');
+					}
+
+					else {
+						$(this).removeClass('result');
+					}			
+				});
+			}
 		});
 	},
 
