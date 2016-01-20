@@ -100,7 +100,26 @@ var Listener = {
 						}
 
 						else {
-							$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+							if (index == 'download-dir') {
+								$('section.settingsSidebar table').append('<tr data-spec="download-dir"><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+							}
+
+							else {
+								$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+							}
+						}
+
+						if (index == 'download-dir') {
+							TransmissionServer.sendServerRequest({
+								method: 'free-space',
+								arguments: {
+									'path': value
+								}
+							}, function(response) {
+								response = response.arguments;
+
+								$('<tr><td>download-dir-free-space</td><td><input disabled value="' + Formatter.size(response['size-bytes']) + '"></td></tr>').insertAfter($('section.settingsSidebar table tr[data-spec="download-dir"]'));
+							});
 						}
 					}
 				});

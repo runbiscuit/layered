@@ -3,6 +3,7 @@ var TransmissionServer = {
 	_latestTorrentRefresh: 0,
 	_currentPage: 1,
 	_waitLock: false, // this will lock all update operations.
+	_downloadFolder: '',
 
 	sendServerRequest: function(data, callback) {
 		var remote = TransmissionServer;
