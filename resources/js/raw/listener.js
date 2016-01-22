@@ -684,6 +684,36 @@ var Listener = {
 		});
 	},
 
+	searchTracker: function() {
+		$('section#trackers input.search').unbind();
+
+		$('section#trackers input.search').keyup(function() {
+			var value = $(this).val().toLowerCase();
+
+			if (value.length == 0) {
+				$('section#trackers').removeClass('searchQuery');
+			}
+
+			else {
+				$('section#trackers section.tracker').each(function(index, tracker) {
+					var trackerName = $(this).find('h4').text().toLowerCase();
+
+					$('section#trackers').addClass('searchQuery');
+
+					console.log($(this));
+
+					if (trackerName.indexOf(value) != -1 || trackerName == '') {
+						$(this).addClass('result');
+					}
+
+					else {
+						$(this).removeClass('result');
+					}
+				});
+			}
+		});
+	},
+
 	selectTorrent: function() {
 		$('section.torrents section.torrent a.selectTorrent').unbind();
 

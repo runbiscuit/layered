@@ -321,6 +321,19 @@ body
 				padding: 10px 0px 0px 0px
 				width: 100%
 
+				&.searchQuery
+					section.tracker
+						display: none
+
+						&.result
+							display: block
+
+							&:nth-child(odd)
+								@extend .grey.lighten-2
+
+							&:nth-child(even)
+								@extend .grey.lighten-1
+
 				section.tracker
 					padding: 10px 10px
 

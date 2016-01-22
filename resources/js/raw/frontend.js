@@ -43,7 +43,8 @@ $(document).ready(function() {
 	Listener.updateDate(); // updates the date
 	Listener.updateSettings(); // updates settings
 	Listener.updateStatistics(); // updates bandwidth
-	Listener.searchTorrent(); // initializes the search feature
+	Listener.searchTorrent(); // initializes the search torrent feature
+	Listener.searchTracker(); // initializes the search tracker feature
 	Listener.toggleSpeedLimitButton(); // initializes the speed ;imit button
 	filterBar.init(); // initializes the filterBar
 	Listener.showCredits(); // initializes the credits
