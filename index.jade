@@ -309,13 +309,31 @@ html
 		section.credits
 			section.head
 				h3 Credits
-			section
-				p
-					| Made by 
-					a(href='https://theroyalstudent.com') @theroyalstudent
-					| .
 
+			section.body.grid-container
+				section.grid-33
+					img(src='./resources/img/profilePicture/theroyalstudent.png')
+					p
+						| Edwin A. 
+						a(href='https://theroyalstudent.com') (@theroyalstudent)
+				section.grid-66
+					h5 Special Thanks:
+					ul
+						li 
+							a(href='http://bourbon.io') Bourbon
+						li
+							a(href='http://materializecss.com') MaterializeCSS
+						li
+							a(href='http://unsemantic.com') Unsementic
+
+			hr
+			section.footer
 				p 
 					| If you are keen to contribute, do check out the GitHub repository 
 					a(href='https://github.com/theroyalstudent/layered') here
 					| .
+					br
+				p
+					| Do report bugs or feature requests 
+					a(href='https://github.com/theroyalstudent/layered/issues') here
+					|  if you find any, too.
