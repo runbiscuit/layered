@@ -100,13 +100,13 @@ var Sidebar = {
 			$('section.sidebar section#peers tr.peer').remove();
 
 			$.each(torrent.peers, function(index, peer) {
-				console.log(peer);
+				// console.log(peer);
 
 				$('section.sidebar section#peers table').append('<tr class="peer"><td>' + peer.address + ':' + peer.port + '</td><td>' + peer.clientName + '</td><td>' + (peer.progress * 100) + '</td><td>' + Formatter.speed(peer.rateToClient) + '</td><td>' + Formatter.speed(peer.rateToPeer) + '</td></tr>');
 			});
 
 			$.each(torrent.files, function(index, file) {
-				console.log(file);
+				// console.log(file);
 
 				var fileElement = 'section.sidebar section#files section.file[data-id="' + index + '"] ';
 

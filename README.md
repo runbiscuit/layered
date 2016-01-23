@@ -51,9 +51,14 @@ npm install gulp gulp-sass gulp-minify-css gulp-jade gulp-autoprefixer gulp-ugli
 ## Credits
 * [@theroyalstudent](https://github.com/theroyalstudent) for the rewritten interface.
 
+#### Libraries Used:
+* [Bourbon](http://bourbon.io)
+* [MaterializeCSS](http://materializecss.com)
+* [Unsementic](http://unsemantic.com)
+
 ## Licenses
 
-Copyright (C) 2014-2015 [Edwin A.](https://theroyalstudent.com) <edwin@theroyalstudent.com>
+Copyright (C) 2014-2016 [Edwin A.](https://theroyalstudent.com) <edwin@theroyalstudent.com>
 
 This work is licensed under the Creative Commons Attribution-ShareAlike 3.0
 
