@@ -279,9 +279,9 @@ html
 				.file-field.input-field.grid-100
 					.btn
 						span File
-						input(type='file').torrentFile
+						input(type='file' multiple).torrentFile
 					.file-path-wrapper
-						input.file-path.validate(type='text').grid-50
+						input.file-path.validate(type='text').torrentFilePathDisplay.grid-50
 					input(name='torrentLink' placeholder='Torrent URL or magnet: link').torrentLink.grid-50
 				input(type='checkbox')#startAutomatically
 				label(for='startAutomatically' checked) Start Automatically

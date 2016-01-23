@@ -272,30 +272,38 @@ var Listener = {
 			});
 
 			function addTorrentLink() {
-				TransmissionServer.sendServerRequest({
-					method: 'torrent-add',
-					arguments: {
-						'filename': $('input.torrentLink').val(),
-						'paused': !$('input#startAutomatically').prop('checked')
-					}
-				}, function(response) {
-					if (response.result != 'success') {
-						toast('Error adding torrent: ' + response.result, 500);
-					}
+				if ($('input.torrentLink').val() !== '') {
+					TransmissionServer.sendServerRequest({
+						method: 'torrent-add',
+						arguments: {
+							'filename': $('input.torrentLink').val(),
+							'paused': !$('input#startAutomatically').prop('checked')
+						}
+					}, function(response) {
+						if (response.result != 'success') {
+							toast('Error adding torrent: ' + response.result, 2000);
+						}
 
-					else {
-						toast('Torrent added!', 500);
-					}
+						else {
+							toast('Torrent added!', 2000);
+						}
 
-					$('input.torrentLink').val('');
-					$('input.torrentFile').prop('files', []);
-				});
+						$('input.torrentLink').val('');
+						$('input.torrentFile').prop('files', []);
+					});
+				}
 			}
 
 			$('section.addTorrentFunctionality a.addTorrent').unbind();
 			$('section.addTorrentFunctionality a.addTorrent').click(function() {
-				if ($('input.torrentFile').prop('files')[0] != undefined) {
-					var torrentFile = $('input.torrentFile').prop('files')[0];
+				var files = $('section.addTorrentFunctionality input.torrentFile')[0].files;
+
+				if (files.length != 0) {
+					addTorrentLink();
+				}
+
+				$.each(files, function(index, file) {
+					var torrentFile = file;
 					var filereader = new FileReader();
 					
 					filereader.onload = function() { 
@@ -311,26 +319,22 @@ var Listener = {
 								}
 							}, function(response) {
 								if (response.result != 'success') {
-									toast('Error adding torrent: ' + response.result, 500);
+									console.log(file);
+									toast('Error adding torrent: ' + response.result, 2000);
 								}
 
 								else {
-									toast('Torrent added!', 500);
+									toast('Torrent added!', 2000);
 								}
 							});
-						}
-
-						else {
-							addTorrentLink();
 						}
 					};
 
 					filereader.readAsDataURL(torrentFile);
-				}
+				});
 
-				else {
-					addTorrentLink();
-				}
+				$('section.addTorrentFunctionality input.torrentFile').val('');
+				$('section.addTorrentFunctionality input.torrentFilePathDisplay').val('');
 			});
 		});
 	},
