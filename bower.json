@@ -1,0 +1,29 @@
+{
+  "name": "layered",
+  "description": "A complete rewrite of the Transmission Web Interface with Material Design.",
+  "main": "index.html",
+  "authors": [
+    "Edwin A. (@theroyalstudent)"
+  ],
+  "license": "CC-BY-SA-3.0",
+  "keywords": [
+    "transmission",
+    "material",
+    "torrents"
+  ],
+  "homepage": "https://github.com/theroyalstudent/layered",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "materialize": "^0.98.0",
+    "bourbon": "^4.3.0",
+    "unsemantic": "https://github.com/theroyalstudent/unsemantic-100-grid.git",
+    "materialIcons": "https://google-fonts.azurewebsites.net/googleFonts/GoogleFont-MaterialIcons?family=Material+Icons"
+  }
+}

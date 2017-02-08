@@ -1,0 +1,567 @@
+@import 'reset'
+@import '../../../bower_components/bourbon/app/assets/stylesheets/bourbon'
+@import '../../../bower_components/unsemantic/assets/sass/partials/unsemantic-grid-responsive-tablet'
+@import 'materialize'
+@import 'mixins'
+@import 'animations'
+
+.hidden:not(.parachute):not(.result)
+	display: none !important
+
+.grid-container
+	max-width: initial
+
+strong
+	font-weight: 500
+
+code
+	padding: 0.2em 5px 0.2em 5px 
+	margin: 0
+	font-size: 85%
+	background-color: rgba(0, 0, 0, 0.10)
+	border-radius: 3px
+
+input
+	padding: 5px 10px 5px 10px
+	margin: 10px 0% 10px 0%
+
+textarea
+	padding: 10px
+	height: 20vh
+
+input, textarea
+	outline: 0
+	
+	font-family: 'Roboto'
+	font-weight: 300
+	font-size: 15px
+	
+	border: 2px solid #e0e0e0
+	border-radius: 3px
+
+	transition: border 0.3s ease-in-out
+
+.systemMessage
+	margin: 10px 0px 0px 0px
+	padding: 10px 15px
+	color: white
+	border-radius: 2.5px
+
+.buttonTray
+	padding: 10px 0px 0px 0px
+
+*
+	-webkit-image-drag: none
+	user-select: none
+	-webkit-tap-highlight-color: rgba(0,0,0,0)
+	-webkit-tap-highlight-color: transparent
+
+body 
+	height: 100vh
+	overflow: hidden hidden
+
+	section.fixed-action-btn
+		&:nth-child(even)
+			right: 88px
+
+	section.topBar
+		padding: 10px 20px
+
+		p
+			vertical-align: middle
+			display: inline-block
+
+			font-size: 15px
+			color: white
+
+			text-transform: uppercase
+
+		p.additionalData
+			text-align: right
+
+			span
+				padding: 0px 5px
+
+				&.statistics
+					cursor: pointer
+
+	section.header
+		padding: 10px 40px
+		box-shadow: 0px 1px 5px #000
+
+		*
+			color: white
+
+		span, ul
+			display: inline-block
+			vertical-align: middle
+
+		ul
+			li
+				min-width: 40px
+				text-align: center
+				cursor: pointer
+				display: inline-block
+				padding: 3px 7.5px
+				margin: 0px 10px
+				border-radius: 2.5px
+
+				&.active
+					@extend .blue.darken-3
+
+	section.torrentSearch
+		padding: 0px 40px
+
+	section.parachute
+		display: none
+		z-index: 1000000
+		background-color: white
+		position: absolute
+		top: 0
+		bottom: 0
+		min-height: 100%
+		min-width: 100%
+
+	section.torrentPagination
+		padding: 15px 40px
+		// text-align: center
+
+		display: flex
+		flex-direction: row
+		justify-content: space-between
+
+		button.previousPage
+			float: left
+
+		button.nextPage
+			float: right
+
+	section.torrentsContainer
+		padding: 0 40px
+
+		section.torrents
+			padding: 0 0 2vh 0
+			display: flex
+			flex-direction: row
+			flex-wrap: wrap
+
+			&.downloading
+				section.torrent:not(.downloading)
+					display: none
+
+			&.seeding
+				section.torrent:not(.seeding)
+					display: none
+
+			&.idling
+				section.torrent:not(.idling)
+					display: none
+
+			&.queued
+				section.torrent:not(.queued)
+					display: none
+
+			&.paused
+				section.torrent:not(.paused)
+					display: none
+
+			&.errored
+				section.torrent:not(.errored)
+					display: none
+
+			&.searchQuery
+				section.torrent:not(.result)
+					display: none !important
+
+			&:not(.searchQuery)
+				section.torrent:not(.stacked)
+					&:nth-child(even)
+						@extend .prefix-2
+
+					&:nth-child(odd)
+						@extend .suffix-2
+
+			&:not(.downloading):not(.seeding):not(.idling):not(.queued):not(.paused):not(.errored) > section.torrent:not(.hidden):not(.stacked)
+				display: flex
+				flex-direction: column
+				justify-content: space-between
+
+				.card-content
+					margin: 0
+
+			section.torrent
+				transition: background-color 0.5s ease
+
+				&.default, &.idling
+					@extend .blue-grey.darken-4
+
+					&.selected
+						@extend .blue-grey
+
+					& > section.card-content section.progress section.determinate
+						@extend .blue-grey.darken-1
+
+				&.paused, &.errored
+					@extend .red.darken-4
+
+					&.selected
+						@extend .red
+
+					& > section.card-content section.progress section.determinate
+						@extend .red.darken-1
+
+				&.queued
+					@extend .deep-orange.darken-1
+
+					&.selected
+						@extend .deep-orange.lighten-1
+
+					& > section.card-content section.progress section.determinate
+						@extend .deep-orange.lighten-2
+
+				&.downloading
+					@extend .blue.darken-4
+
+					&.selected
+						@extend .blue
+
+					& > section.card-content section.progress section.determinate
+						@extend .blue.darken-1
+
+				&.seeding
+					@extend .teal.darken-3
+
+					&.selected
+						@extend .teal
+
+					& > section.card-content section.progress section.determinate
+						@extend .teal.lighten-1
+
+				&.stacked
+					position: absolute
+					z-index: 10000000
+					top: 100%
+					left: 0%
+					height: 100%
+					width: 35%
+
+					// override margin from prefix-2 or suffix-2
+					margin: 0 !important
+
+					i.material-icons.closeSidebar
+						right: 20px
+						position: absolute
+						cursor: pointer
+
+						@media (max-width: $media-mobile-max)
+							display: none
+
+						@media (min-width: $media-tablet-min)
+							float: right
+							cursor: pointer
+
+					i.material-icons.toggle
+						right: 45px !important
+
+				h3.torrentName
+					overflow: hidden
+					width: calc(100% - 60px)
+					text-overflow: ellipsis
+					white-space: nowrap
+
+					span.name
+						width: calc(95% - 48px)
+
+					i.material-icons.toggle
+						right: 20px
+						position: absolute
+						cursor: pointer
+
+				p.message
+					word-wrap: break-word
+
+	section.sidebar
+		right: -100%
+		top: 0%
+		padding: 20px
+
+		z-index: 1000001
+
+		width: 65%
+		min-height: 100vh
+		max-height: 100vh
+
+		position: fixed
+		background-color: white
+		
+		&.box-shadow
+			box-shadow: 0 0 0 0 black, -5px 0 9px -2px black
+
+		overflow-y: scroll
+
+		& > section:not(.active)
+			display: none
+
+		& > section.active
+				display: block
+
+		section.torrentInformation
+			section.head
+				h3
+					span.showOnMobile
+						@media (min-width: $media-tablet-min)
+							display: none
+
+						i.material-icons.closeSidebar
+							float: right
+							font-size: 1.5em
+							cursor: pointer
+
+			section.tabContent
+				& > section
+					width: 100%
+					padding: 10px 0 0 0
+
+				section#information, section#activity
+					width: 100%
+
+					table
+						table-layout: fixed
+						width: 100%
+
+						tr
+							td
+								white-space: normal
+								overflow: hidden
+								padding: 10px 0px 10px 0px
+								word-break: break-word
+								
+								&:nth-child(1)
+									width: 15%
+
+								&:nth-child(2)
+									width: 85%
+
+				section#trackers
+					section.trackerSearch
+						input.search
+							margin: 0
+
+					section.trackers.searchQuery
+						section.tracker
+							&:not(.result)
+								display: none
+
+							&.result
+								display: block
+
+								&:nth-of-type(odd)
+									@extend .grey.lighten-2
+
+								&:nth-of-type(even)
+									@extend .grey.lighten-1
+
+					section.trackers
+						section.tracker
+							margin: 10px 0 0 0
+							padding: 10px 10px
+
+							&:nth-of-type(odd)
+								@extend .grey.lighten-2
+
+							&:nth-of-type(even)
+								@extend .grey.lighten-1
+
+							table
+								width: 100%
+
+								tr
+									td
+										white-space: normal
+										overflow: hidden
+										padding: 5px 0px
+										
+										&:nth-child(1)
+											width: 15%
+
+										&:nth-child(2)
+											width: 85%
+
+				section#peers
+					table
+						width: 100%
+
+						tr
+							th
+								padding: 10px 0px 10px 0px
+								font-weight: 500 !important
+								text-align: center
+								border-bottom: 1px solid #bdbdbd
+								margin: 0px 0px 10px 0px
+
+								&.ipAddress
+									width: 20%
+
+								&.client
+									width: 45%
+
+								&.percentageDone
+									width: 5%
+
+								&.uploading
+									width: 15%
+
+								&.downloading
+									width: 15%
+
+							td
+								white-space: normal
+								overflow: hidden
+								text-align: center
+								padding: 10px 0px 10px 0px
+
+								&:nth-child(2)
+									vertical-align: middle
+
+								code
+									word-break: break-all
+
+				section#files
+					section.file
+						padding: 10px 10px
+
+						&:nth-child(odd)
+							@extend .grey.lighten-2
+
+						&:nth-child(even)
+							@extend .grey.lighten-1
+
+						h4
+							span.download
+								float: right
+
+						table
+							table-layout: fixed
+							width: 100%
+
+							tr
+								td
+									white-space: normal
+									overflow: hidden
+									padding: 5px 0px
+									
+									&:nth-child(1)
+										width: 15%
+
+									&:nth-child(2)
+										width: 85%
+
+				section#options
+					table
+						width: 100%
+
+						tr
+							td
+								white-space: normal
+								overflow: hidden
+								padding: 5px 0px
+
+								&.priorityContainer
+									span
+										padding: 0px 3px
+
+										[type=radio]:checked+label, [type=radio]:not(:checked)+label
+											padding-left: 30px
+											padding-top: 2px
+
+								&:nth-child(1)
+									width: 25%
+
+								&:nth-child(2)
+									width: 75%
+
+									input
+										width: 75%
+
+		section.statistics, section.settings
+			table
+				table-layout: fixed
+				width: 100%
+
+				tr
+					td
+						white-space: normal
+						overflow: hidden
+						padding: 5px 0px
+						word-break: break-word
+						
+						&:nth-child(1)
+							width: 25%
+
+						&:nth-child(2)
+							width: 75%
+
+						input
+							width: 75%
+							margin: 0
+
+						div.switch
+							z-index: 2
+							position: absolute
+
+		section.addTorrentFunctionality
+			input.torrentLink
+				width: 100%
+
+		section.credits
+			section.body
+				section
+					img
+						border-radius: 50%
+						height: 256px
+						width: 256px
+
+					p
+						text-align: center
+
+	section.sidebarOverflow
+		right: 0%
+		top: 0%
+
+		z-index: 1000000
+
+		width: 100%
+		min-height: 100%
+
+		position: fixed
+		background-color: transparent
+		cursor: pointer
+
+		&:hover
+			section.clickToClose
+				opacity: 1
+
+		section.clickToClose
+			text-align: center
+
+			width: 35%
+			height: 100vh
+
+			opacity: 0
+			background-color: white
+
+			transition: opacity 0.5s ease
+
+			display: flex
+			flex-direction: column
+			justify-content: space-around
+
+			i.material-icons
+				font-size: 160px
+
+	.material-tooltip
+		z-index: 100000
+		position: absolute
+
+	#toast-container
+		z-index: 1000001
