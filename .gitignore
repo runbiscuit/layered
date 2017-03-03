@@ -1,11 +1,12 @@
-
-# Created by https://www.gitignore.io/api/macos,windows,linux,bower,node
-
 ### Bower ###
-bower_components
+bower_components/*
 .bower-cache
 .bower-registry
 .bower-tmp
+
+# Application specific .gitignore:
+!bower_components/materialIcons
+!bower_components/materialize
 
 ### Linux ###
 *~
@@ -130,5 +131,3 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
-
-# End of https://www.gitignore.io/api/macos,windows,linux,bower,node
