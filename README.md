@@ -2,6 +2,8 @@
 Complete rewrite of the Transmission Web Interface with Material Design,
 using [jQuery](https://jquery.com), [MaterializeCSS](http://materializecss.com/) and [Unsemantic CSS Framework](http://unsemantic.com/).
 
+Current version: _v2.0-beta1 - initial beta release_
+
 ## Screenshots
 ### Desktop
 ![Screenshot Desktop](resources/img/screenshot-desktop.png)
