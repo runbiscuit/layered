@@ -1,0 +1,29 @@
+{
+  "name": "layered",
+  "version": "1.0.1",
+  "description": "A complete rewrite of the Transmission Web Interface with Material Design.",
+  "main": "index.html",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theroyalstudent/layered.git"
+  },
+  "author": "Edwin A. (@theroyalstudent)",
+  "license": "CC-BY-SA-3.0",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^3.1.0",
+    "gulp-clean-css": "^2.0.10",
+    "gulp-concat": "^2.6.0",
+    "gulp-filter": "^5.0.0",
+    "gulp-if": "^2.0.1",
+    "gulp-merge": "^0.1.1",
+    "gulp-obfuscate": "^0.2.9",
+    "gulp-pug": "^3.0.3",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.3.2",
+    "gulp-uglify": "^1.5.4",
+    "main-bower-files": "^2.13.1",
+    "pug": "2.0.0-beta3",
+    "yargs": "^5.0.0"
+  }
+}

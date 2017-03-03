@@ -6,8 +6,6 @@ var TransmissionServer = {
 	_downloadFolder: '',
 
 	sendServerRequest: function(data, callback) {
-		var remote = TransmissionServer;
-
 		if (typeof async != 'boolean')
 			async = true;
 
@@ -18,7 +16,7 @@ var TransmissionServer = {
 			dataType: 'json',
 			cache: false,
 			data: JSON.stringify(data),
-			beforeSend: function(XHR){ if (remote._token) { XHR.setRequestHeader('X-Transmission-Session-Id', remote._token); } },
+			beforeSend: function(XHR){ if (TransmissionServer._token) { XHR.setRequestHeader('X-Transmission-Session-Id', TransmissionServer._token); } },
 			error: function(request, error_string, exception){ TransmissionServer.ajaxErrorHandler(request, error_string, exception, ajaxSettings); },
 			success: callback,
 			async: true
@@ -26,8 +24,8 @@ var TransmissionServer = {
 
 		if (TransmissionServer._waitLock) {
 			setTimeout(function() {
-				remote.sendServerRequest(data, callback);
-			}, 100);
+				TransmissionServer.sendServerRequest(data, callback);
+			}, 500);
 		}
 
 		else {
@@ -36,24 +34,23 @@ var TransmissionServer = {
 	},
 
 	ajaxErrorHandler: function(request, error_string, exception, ajaxObject) {
-		var token, remote = this;
+		var token;
 
 		// set the Transmission-Session-Id on a 409
 		if (request.status === 409 || (token = request.getResponseHeader('X-Transmission-Session-Id'))){
-			remote._token = request.getResponseHeader('X-Transmission-Session-Id');
+			TransmissionServer._token = request.getResponseHeader('X-Transmission-Session-Id');
 			$.ajax(ajaxObject);
 			return;
 		}
 
-		remote._error = request.responseText
+		TransmissionServer._error = request.responseText
 						? request.responseText.trim().replace(/(<([^>]+)>)/ig,"")
 						: "";
 
-		if (!remote._error.length)
-			remote._error = 'Server not responding';
+		if (!TransmissionServer._error.length)
+			TransmissionServer._error = 'Server not responding, retrying in 2.5 seconds...';
 
-		toast('Connection Failed. Could not connect to the server. You may need to reload the page to reconnect.', 5000);
-		toast(remote._error, 5000);
+		Materialize.toast(TransmissionServer._error, 2500, 'rounded');
 	},
 
 	getSettings: function() {

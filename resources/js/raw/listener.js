@@ -1,6 +1,7 @@
 var Listener = {
 	statisticsInterval: '',
 	lastRefresh: 1000,
+	showPerPage: 20,
 
 	/*
 					 _       _              _   _                _       _       
@@ -45,26 +46,7 @@ var Listener = {
 	updateSettings: function() {
 		$('section.floatingOptions a.settings').unbind();
 		$('section.floatingOptions a.settings').click(function() {
-			$('body').css('overflow', 'hidden');
-
-			$('section.settingsSidebar').animate({
-				right: '0%'
-			}, 300);
-
-			setTimeout(function() { $('section.clickToClose').css('padding', (($(window).height() - $('section.clickToClose').height()) / 4) + 'px 0px ' + (($(window).height() - $('section.clickToClose').height()) / 4 * 3) + 'px 0px'); }, 100);
-
-			$('section.sidebarOverflow').removeClass('hidden');
-
-			$('section.sidebarOverflow').unbind();
-			$('section.sidebarOverflow').click(function() {
-				$('body').css('overflow', 'initial');
-
-				$('section.settingsSidebar').animate({
-					right: '-100%'
-				}, 300);
-
-				$('section.sidebarOverflow').addClass('hidden');
-			});
+			Sidebar.open('settings');
 		});
 
 		var doNotEdit = [
@@ -79,7 +61,7 @@ var Listener = {
 			TransmissionServer.sendServerRequest({
 				method: 'session-get'
 			}, function(response) {
-				$('section.settingsSidebar table').html('');
+				$('section.sidebar section.settings table').html('');
 
 				response = response.arguments;
 
@@ -89,23 +71,23 @@ var Listener = {
 					}
 
 					else if (doNotEdit.indexOf(index) != -1) {
-						$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><input disabled value="' + value + '"></td></tr>');
+						$('section.sidebar section.settings table').append('<tr><td>' + index + '</td><td><input disabled value="' + value + '"></td></tr>');
 					}
 
 					else {
 						if (typeof value == 'boolean') {
-							$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><div class="switch"><label>Off<input type="checkbox" name="' + index + '"><span class="lever"></span>On</label></div></td></tr>');
-							$('section.settingsSidebar table input[type="checkbox"][name="' + index + '"]').prop('checked', value);
-							$('section.settingsSidebar table input[type="checkbox"][name="' + index + '"]').val(value);
+							$('section.sidebar section.settings table').append('<tr><td>' + index + '</td><td><div class="switch"><label>Off<input type="checkbox" name="' + index + '"><span class="lever"></span>On</label></div></td></tr>');
+							$('section.sidebar section.settings table input[type="checkbox"][name="' + index + '"]').prop('checked', value);
+							$('section.sidebar section.settings table input[type="checkbox"][name="' + index + '"]').val(value);
 						}
 
 						else {
 							if (index == 'download-dir') {
-								$('section.settingsSidebar table').append('<tr data-spec="download-dir"><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+								$('section.sidebar section.settings table').append('<tr data-spec="download-dir"><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
 							}
 
 							else {
-								$('section.settingsSidebar table').append('<tr><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
+								$('section.sidebar section.settings table').append('<tr><td>' + index + '</td><td><input name="' + index + '" value="' + value + '"></td></tr>');
 							}
 						}
 
@@ -118,14 +100,14 @@ var Listener = {
 							}, function(response) {
 								response = response.arguments;
 
-								$('<tr><td>download-dir-free-space</td><td><input disabled value="' + Formatter.size(response['size-bytes']) + '"></td></tr>').insertAfter($('section.settingsSidebar table tr[data-spec="download-dir"]'));
+								$('<tr><td>download-dir-free-space</td><td><input disabled value="' + Formatter.size(response['size-bytes']) + '"></td></tr>').insertAfter($('section.sidebar section.settings table tr[data-spec="download-dir"]'));
 							});
 						}
 					}
 				});
 
-				$('section.settingsSidebar table input[type="checkbox"]').unbind();
-				$('section.settingsSidebar table input[type="checkbox"]').click(function(){
+				$('section.sidebar section.settings table input[type="checkbox"]').unbind();
+				$('section.sidebar section.settings table input[type="checkbox"]').click(function(){
 					$(this).val($(this).prop('checked'));
 				});
 
@@ -137,23 +119,15 @@ var Listener = {
 	},
 
 	updateSettingsButton: function() {
-		$('section.settingsSidebar a.updateSettingsButton').unbind();
-		$('section.settingsSidebar a.updateSettingsButton').click(function() {
-			var args = $('section.settingsSidebar table tr td input:not(disabled)').serialize().split("&").map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
-
-			$.each(args, function(index, val) {
-				while (val.indexOf('%2F') != -1) {
-					val = val.replace('%3A', ':').replace('%2F', '/');
-				}
-
-				args[index] = val;
-			});
+		$('section.sidebar section.settings a.updateSettingsButton').unbind();
+		$('section.sidebar section.settings a.updateSettingsButton').click(function() {
+			var args = $('section.sidebar section.settings table tr td input:not(disabled)').serializeArray();
 
 			TransmissionServer.sendServerRequest({
 				method: 'session-set',
 				arguments: args
 			}, function(response) {
-				toast('Success!', 500);
+				Materialize.toast('Success!', 500, 'rounded');
 			});
 		});
 	},
@@ -170,27 +144,11 @@ var Listener = {
 	updateStatistics: function() {
 		$('section.topBar p.additionalData span.statistics').unbind();
 		$('section.topBar p.additionalData span.statistics').click(function() {
-			$('body').css('overflow', 'hidden');
+			Sidebar.open('statistics');
 
-			$('section.statisticsSidebar').animate({
-				right: '0%'
-			}, 300);
-
-			setTimeout(function() { $('section.clickToClose').css('padding', (($(window).height() - $('section.clickToClose').height()) / 4) + 'px 0px ' + (($(window).height() - $('section.clickToClose').height()) / 4 * 3) + 'px 0px'); }, 100);
-
-			$('section.sidebarOverflow').removeClass('hidden');
-
-			$('section.sidebarOverflow').unbind();
 			$('section.sidebarOverflow').click(function() {
-				$('body').css('overflow', 'initial');
-
-				$('section.statisticsSidebar').animate({
-					right: '-100%'
-				}, 300);
-
-				$('section.sidebarOverflow').addClass('hidden');
-
 				clearInterval(Listener.statisticsInterval);
+				$('section.sidebarOverflow').unbind();
 			});
 		});
 
@@ -203,12 +161,12 @@ var Listener = {
 
 				$('section.topBar p.additionalData span.bandwidth').text('D: ' + Formatter.speed(response.downloadSpeed) + ' | U: ' + Formatter.speed(response.uploadSpeed));
 
-				$('section.statisticsSidebar table tr td.activeTorrents').text(response.activeTorrentCount);
-				$('section.statisticsSidebar table tr td.pausedTorrents').text(response.pausedTorrentCount);
-				$('section.statisticsSidebar table tr td.totalDownloaded').text(Formatter.size(response['cumulative-stats'].downloadedBytes) + ' (' + Formatter.size(response['current-stats'].downloadedBytes) + ' this session)');
-				$('section.statisticsSidebar table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' this session)');
-				$('section.statisticsSidebar table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' this session)');
-				$('section.statisticsSidebar table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' this session)');
+				$('section.sidebar section.statistics table tr td.activeTorrents').text(response.activeTorrentCount);
+				$('section.sidebar section.statistics table tr td.pausedTorrents').text(response.pausedTorrentCount);
+				$('section.sidebar section.statistics table tr td.totalDownloaded').text(Formatter.size(response['cumulative-stats'].downloadedBytes) + ' (' + Formatter.size(response['current-stats'].downloadedBytes) + ' this session)');
+				$('section.sidebar section.statistics table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' this session)');
+				$('section.sidebar section.statistics table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' this session)');
+				$('section.sidebar section.statistics table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' this session)');
 			});
 		}
 
@@ -239,7 +197,7 @@ var Listener = {
 					// green means that alt-speed is not enabled
 				}
 			}, function(response) {
-				toast('Success!', 500);
+				Materialize.toast('Success!', 500, 'rounded');
 				TransmissionServer.getSettings();
 			});
 		});
@@ -248,28 +206,9 @@ var Listener = {
 	addTorrent: function() {
 		$('section.floatingOptions a.addTorrent').unbind();
 		$('section.floatingOptions a.addTorrent').click(function() {
-			$('body').css('overflow', 'hidden');
-
-			$('section.addTorrentFunctionality').animate({
-				right: '0%'
-			}, 300);
-
-			setTimeout(function() { $('section.clickToClose').css('padding', (($(window).height() - $('section.clickToClose').height()) / 4) + 'px 0px ' + (($(window).height() - $('section.clickToClose').height()) / 4 * 3) + 'px 0px'); }, 100);
-
-			$('section.sidebarOverflow').removeClass('hidden');
+			Sidebar.open('addTorrent');
 
 			$('input#startAutomatically').prop('checked', true);
-
-			$('section.sidebarOverflow').unbind();
-			$('section.sidebarOverflow').click(function() {
-				$('body').css('overflow', 'initial');
-
-				$('section.addTorrentFunctionality').animate({
-					right: '-100%'
-				}, 300);
-
-				$('section.sidebarOverflow').addClass('hidden');
-			});
 
 			function addTorrentLink() {
 				if ($('input.torrentLink').val() !== '') {
@@ -281,11 +220,11 @@ var Listener = {
 						}
 					}, function(response) {
 						if (response.result != 'success') {
-							toast('Error adding torrent: ' + response.result, 2000);
+							Materialize.toast('Error adding torrent: ' + response.result, 2000, 'rounded');
 						}
 
 						else {
-							toast('Torrent added!', 2000);
+							Materialize.toast('Torrent added!', 2000, 'rounded');
 						}
 
 						$('input.torrentLink').val('');
@@ -294,13 +233,13 @@ var Listener = {
 				}
 			}
 
-			$('section.addTorrentFunctionality a.addTorrent').unbind();
-			$('section.addTorrentFunctionality a.addTorrent').click(function() {
-				var files = $('section.addTorrentFunctionality input.torrentFile')[0].files;
+			$('section.sidebar section.addTorrent a.addTorrent').unbind();
+			$('section.sidebar section.addTorrent a.addTorrent').click(function() {
+				var files = $('section.sidebar section.addTorrent input.torrentFile')[0].files;
 
 				addTorrentLink();
 
-				if ($('section.addTorrentFunctionality input.torrentFilePathDisplay') != '') {
+				if ($('section.sidebar section.addTorrent input.torrentFilePathDisplay') != '') {
 					// if user cleared the text field in an attempt to make things work, don't run
 
 					$.each(files, function(index, file) {
@@ -321,11 +260,11 @@ var Listener = {
 								}, function(response) {
 									if (response.result != 'success') {
 										console.log(file);
-										toast('Error adding torrent: ' + response.result, 2000);
+										Materialize.toast('Error adding torrent: ' + response.result, 2000, 'rounded');
 									}
 
 									else {
-										toast('Torrent added!', 2000);
+										Materialize.toast('Torrent added!', 2000, 'rounded');
 									}
 								});
 							}
@@ -335,7 +274,7 @@ var Listener = {
 					});
 				}
 
-				$('section.addTorrentFunctionality input.torrentFilePathDisplay').val('');
+				$('section.sidebar section.addTorrent input.torrentFilePathDisplay').val('');
 			});
 		});
 	},
@@ -356,12 +295,13 @@ var Listener = {
 			"Verify": 'torrent-verify',
 			"Ask tracker for more peers": 'torrent-reannounce',
 			"Remove": 'torrent-remove',
+			"Close": 'close'
 		};
 
-		$('.floatingActions ul a').unbind();
-		$('.floatingActions ul a').click(function() {
+		$('section.floatingActions ul a').unbind();
+		$('section.floatingActions ul a').click(function() {
 			var id = [];
-			var action = actions[$(this).data('tooltip')];
+			var action = actions[$(this).data('action')];
 
 			if ($('section.torrents section.torrent.selected').length == 1) {
 				id = $('section.torrents section.torrent.selected').data('id');
@@ -380,7 +320,7 @@ var Listener = {
 						ids: id
 					}
 				}, function(response) {
-					toast('Success!', 500);
+					Materialize.toast('Success!', 500, 'rounded');
 				});
 			}
 
@@ -406,7 +346,7 @@ var Listener = {
 						'files-wanted': [ fileId ]
 					}
 				}, function(response) {
-					toast('Success!', 500);
+					Materialize.toast('Success!', 500, 'rounded');
 				});
 			}
 
@@ -418,7 +358,7 @@ var Listener = {
 						'files-unwanted': [ fileId ]
 					}
 				}, function(response) {
-					toast('Success!', 500);
+					Materialize.toast('Success!', 500, 'rounded');
 				});
 			}
 		});
@@ -447,9 +387,9 @@ var Listener = {
 					'maxConnectedPeers': $('section#options table input.maxConnections').val()
 				}
 			}, function(response) {
-				$('#toast-container').css('z-index', 100001);
-				toast('Success!', 500);
-				setTimeout(function() { $('#toast-container').css('z-index', 10000); }, 550);
+				$('#Materialize.toast-container').css('z-index', 100001);
+				Materialize.toast('Success!', 500, 'rounded');
+				setTimeout(function() { $('#Materialize.toast-container').css('z-index', 10000); }, 550);
 			});
 
 			$('section#options table .downloadSpeedToggle input').prop('checked');
@@ -464,48 +404,85 @@ var Listener = {
 	},
 
 	changeTorrentColors: function(id, statusCode, torrent, element, messageElement) {
-		if (statusCode == 0) {
-			// torrent has been stopped or paused
+		// adapted code from:
+		// https://github.com/transmission/transmission/blob/4c00df9463ea4fd70b73c620e439f5c3ee5efa60/web/javascript/torrent.js#L375
+		// (transmission web interface, torrent.js)
 
-			if (torrent.error != 0) {
-				element.addClass('errored');
-				messageElement.text('Error: ' + torrent.errorString + ' [' + torrent.error + ']');
-			}
+		if (statusCode === 0) {
+			// torrent has been paused
 
-			else {
-				element.removeClass('errored');
-				messageElement.text('Paused');
-			}
-
-			element.removeClass('default queued downloading seeding');
-			setTimeout(function() { element.addClass('paused'); }, 10);
+			messageElement.text('Paused');
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('paused');
 		}
 
-		else if (statusCode == 3) {
+		else if (statusCode == 1 || statusCode == 2 || statusCode == 3) {
+			// 1: torrent has been queued for verification
+
+			if (statusCode == 1) {
+				messageElement.text('Queued for verification');
+			}
+
+			// 2: torrent data is verifying
+
+			if (statusCode == 2) {
+				messageElement.text('Verifying local data');
+			}
+
 			// 3: torrent has been queued
 
-			messageElement.text('Queued');
+			if (statusCode == 3) {
+				messageElement.text('Queued');
+			}
 
-			element.removeClass('default paused downloading seeding');
-			setTimeout(function() { element.addClass('queued'); }, 10);
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('queued');
 		}
 
 		else if (statusCode == 4) {
 			// 4: torrent is downloading
 
 			messageElement.text('Downloading: ' + Formatter.speed(torrent.rateDownload) + ', Seeding: ' + Formatter.speed(torrent.rateUpload));
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('downloading');
+		}
 
-			element.removeClass('default paused queued seeding');
-			setTimeout(function() { element.addClass('downloading'); }, 10);
+		else if (statusCode == 5) {
+			// 5: torrent is queued for seeding
+
+			messageElement.text('Downloaded, queued for seeding');
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('queued');
 		}
 
 		else if (statusCode == 6 || statusCode == 8) {
 			// 6 & 8: torrent is seeding (see https://forum.transmissionbt.com/viewtopic.php?t=13357#p60235)
 
 			messageElement.text('Seeding: ' + Formatter.speed(torrent.rateUpload) + '');
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('seeding');
+		}
 
-			element.removeClass('default paused queued downloading');
-			setTimeout(function() { element.addClass('seeding'); }, 10);
+		else {
+			// assume status to be unknown if no known value is returned
+
+			messageElement.text('Unknown');
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
+		}
+
+		if (torrent.error !== 0) {
+			// regardless of status, if error > 0, regard it as an error
+			
+			if (torrent.error == 1) {
+				messageElement.text('Tracker Warning: ');
+			}
+
+			else if (torrent.error == 2) {
+				messageElement.text('Tracker Error: ');
+			}
+
+
+			else {
+				messageElement.text('Error: ');
+			}
+
+			messageElement.text(messageElement.text() + torrent.errorString + ' [#' + torrent.error + ']');
+			element.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
 		}
 	},
 
@@ -514,8 +491,6 @@ var Listener = {
 
 		$('section.torrents section.torrent:not(.hidden) a.getMoreDetails, section.torrents.searchQuery section.torrent.result a.getMoreDetails').click(function() {
 			TransmissionServer._waitLock = true;
-
-			$('body').css('overflow', 'hidden');
 
 			var id = $(this).parent().parent().data('id');
 			var element = $(this).parent().parent();
@@ -536,7 +511,8 @@ var Listener = {
 					'top': $('body').scrollTop(),
 				}, 300);
 
-				Sidebar.initialize(id, element);				
+				TorrentSidebar.initialize(id, element);
+				Sidebar.open('torrentInformation');
 			});
 		});
 	},
@@ -549,15 +525,16 @@ var Listener = {
 		TransmissionServer.sendServerRequest(o, function(response) {
 			torrents = response.arguments.torrents;
 
-			if ($('section.torrentPagination a.pageInfo span.currentPage').text() == '') {
-				$('section.torrentPagination a.pageInfo span.currentPage').text('1');
+			if ($('section.torrentPagination button.pageInfo span.currentPage').text() == '') {
+				$('section.torrentPagination button.pageInfo span.currentPage').text('1');
 			}
 
-			var totalPages = Math.floor(torrents.length / 20);
-			(torrents.length % 20 > 0) ? totalPages++ : false;
-			$('section.torrentPagination a.pageInfo span.totalPages').text(totalPages);
+			var totalPages = Math.floor(torrents.length / Listener.showPerPage);
+			(torrents.length % Listener.showPerPage > 0) ? totalPages++ : false;
+			$('section.torrentPagination button.pageInfo span.totalPages').text(totalPages);
 
 			$.each(torrents, function(index, torrent) {
+				torrent.totalEver = Formatter.size(torrent.downloadedEver + torrent.uploadedEver);
 				torrent.downloadedEver = Formatter.size(torrent.downloadedEver);
 				torrent.uploadedEver = Formatter.size(torrent.uploadedEver);
 				torrent.percentageDone = Formatter.percentageDone(torrent.leftUntilDone, torrent.totalSize);
@@ -570,6 +547,7 @@ var Listener = {
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] h3.torentName span.name').text(torrent.torrentName);
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.downloaded').text(torrent.downloadedEver);
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.uploaded').text(torrent.uploadedEver);
+					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.total').text(torrent.totalEver);
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] span.uploadRatio').text(torrent.uploadRatio);
 
 					if ($('section.torrents section.torrent[data-id="' + torrent.id + '"] .determinate').css('width') != torrent.percentageDone) {
@@ -580,11 +558,24 @@ var Listener = {
 				}
 
 				else {
-					$('section.torrents').append('<section class="card mobile-grid-90 mobile-prefix-5 mobile-suffix-5 tablet-grid-44 tablet-prefix-3 tablet-prefix-3 grid-44 prefix-3 suffix-3 default torrent" data-id="' + torrent.id + '" data-href="' + Listener.lastRefresh + '"><section class="card-content white-text"><h3 class="torrentName truncate"><span class="name">' + torrent.name + '</span><i class="closeSidebar hidden">close</i><i class="material-icons toggle">play_arrow</i></h3><p>Downloaded <span class="downloaded">' + torrent.downloadedEver + '</span>, uploaded <span class="uploaded">' + torrent.uploadedEver + '</span> (ratio: <span class="uploadRatio">' + torrent.uploadRatio + '</span>)</p><section class="progress"><section class="determinate" style="width: ' + torrent.percentageDone + '"></section></section><p class="message"></p></section><section class="card-action"><a class="getMoreDetails">More Details...</a><a class="selectTorrent">Select...</a></section></section>');
+					$('section.elements section.torrent.unset').clone().appendTo('section.torrents');
+
+					$('section.torrents section.torrent.unset').attr('data-id', torrent.id);
+					$('section.torrents section.torrent.unset').attr('data-href', Listener.lastRefresh);
+
+					$('section.torrents section.torrent.unset span.name').text(torrent.name);
+					$('section.torrents section.torrent.unset span.downloaded').text(torrent.downloadedEver);
+					$('section.torrents section.torrent.unset span.uploaded').text(torrent.uploadedEver);
+					$('section.torrents section.torrent.unset span.total').text(torrent.totalEver);
+					$('section.torrents section.torrent.unset span.uploadRatio').text(torrent.uploadRatio);
+					$('section.torrents section.torrent.unset section.progress section.intermediate').css('width', torrent.percentageDone);
+
+					$('section.torrents section.torrent.unset').removeClass('unset');
+
 					Listener.changeTorrentColors(torrent.id, torrent.status, torrent, $('section.torrents section.torrent[data-id="' + torrent.id + '"]'), $('section.torrents section.torrent[data-id="' + torrent.id + '"] p.message'));
 				}
 
-				if (torrent.error != 0) { errored = true; }
+				if (torrent.error !== 0) { errored = true; }
 			});
 
 			$('section.torrents section.torrent').each(function(index, torrent) {
@@ -602,86 +593,72 @@ var Listener = {
 			Listener.torrentPagination();
 		});
 
-		setTimeout(function() { Listener.getTorrents(); }, 1000);
+		setTimeout(function() { Listener.getTorrents(); }, 1250);
 	},
 
 	removeTorrent: function(ids) {
-		$('section.removeTorrentFunctionality').animate({
-			right: '0%'
-		}, 300);
+		$('section.sidebar section.removeTorrent span.torrentString').text(ids.length);
 
-		setTimeout(function() { $('section.clickToClose').css('padding', (($(window).height() - $('section.clickToClose').height()) / 4) + 'px 0px ' + (($(window).height() - $('section.clickToClose').height()) / 4 * 3) + 'px 0px'); }, 100);
-
-		$('section.sidebarOverflow').removeClass('hidden');
-
-		$('section.removeTorrentFunctionality span.torrentString').text(ids.length);
-
-		if (ids.length != 1) { $('section.removeTorrentFunctionality span.plural').removeClass('hidden'); }
-		else { $('section.removeTorrentFunctionality span.plural').addClass('hidden'); }
+		if (ids.length != 1) { $('section.sidebar section.removeTorrent span.plural').removeClass('hidden'); }
+		else { $('section.sidebar section.removeTorrent span.plural').addClass('hidden'); }
 
 		if (ids.length == 0) ids = [];
 
-		$('section.removeTorrentFunctionality a.removeTorrent').unbind();
-		$('section.removeTorrentFunctionality a.removeTorrent').click(function() {
+		$('section.sidebar section.removeTorrent a.removeTorrent').unbind();
+		$('section.sidebar section.removeTorrent a.removeTorrent').click(function() {
 			TransmissionServer.sendServerRequest({
 				method: 'torrent-remove',
 				arguments: {
 					'ids': ids,
-					'delete-local-data': $('section.removeTorrentFunctionality input#deleteAllData').prop('checked')
+					'delete-local-data': $('section.sidebar section.removeTorrent input#deleteAllData').prop('checked')
 				}
 			}, function(response) {
-				toast('Success!', 500);
+				Materialize.toast('Success!', 500, 'rounded');
 			});
 		})
 
-		$('section.sidebarOverflow').unbind();
-		$('section.sidebarOverflow').click(function() {
-			$('section.removeTorrentFunctionality').animate({
-				right: '-100%'
-			}, 300);
-
-			$('section.sidebarOverflow').addClass('hidden');
-		});
+		Sidebar.open('removeTorrent');
 	},
 
 	searchTorrent: function() {
-		$('section.search input.search').unbind();
+		$('section.torrentSearch input.search').unbind();
 
-		$('section.search input.search').keyup(function() {
+		$('section.torrentSearch input.search').keyup(function() {
 			var value = $(this).val().toLowerCase();
+			var odd = true;
 
 			if (value.length == 0) {
 				$('section.torrents').removeClass('searchQuery').addClass(activeTab);
+				$('section.torrentPagination').slideDown(75);
+
+				$('section.torrents section.torrent').removeClass('result suffix-2 tablet-suffix-5 prefix-2 tablet-prefix-5');
+
+				$('section.torrentSearch').animate({
+					'padding': '0 40px 15px'
+				}, 75);
+
+				$('section.torrentPagination').slideDown(75);
 			}
 
 			else {
+				$('section.torrentSearch').animate({
+					'padding': '15px 40px'
+				}, 75);
+
+				$('section.torrentPagination').slideUp(75);
+
 				$('section.torrents section.torrent').each(function(index, torrent) {
 					var torrentName = $(this).find('section.card-content h3.torrentName span.name').text().toLowerCase();
 
-					if (value.length == 0) {
-						$('section.search').animate({
-							'padding': '0 40px 15px'
-						}, 75);
-
-						$('section.torrentPagination').slideDown(75);
-					}
-
-					else {
-						$('section.search').animate({
-							'padding': '15px 40px'
-						}, 75);
-
-						$('section.torrentPagination').slideUp(75);
-					}
-
 					if (torrentName.indexOf(value) != -1 || torrentName == '') {
 						$('section.torrents').removeClass('all downloading seeding idling paused errored').addClass('searchQuery');
-						$(this).addClass('result');
+						$(this).removeClass('result suffix-2 tablet-suffix-5 prefix-2 tablet-prefix-5').addClass('result ' + ((odd) ? 'suffix-2 tablet-suffix-5' : 'prefix-2 tablet-prefix-5'));
+						odd = !odd;
 					}
 
 					else {
-						$(this).removeClass('result');
-					}			
+						$(this).removeClass('suffix-2 tablet-suffix-5 prefix-2 tablet-prefix-5').removeClass('result');
+					}		
 				});
 			}
 
@@ -690,22 +667,20 @@ var Listener = {
 	},
 
 	searchTracker: function() {
-		$('section#trackers input.search').unbind();
+		$('section#trackers section.trackerSearch input.search').unbind();
 
-		$('section#trackers input.search').keyup(function() {
+		$('section#trackers section.trackerSearch input.search').keyup(function() {
 			var value = $(this).val().toLowerCase();
 
 			if (value.length == 0) {
-				$('section#trackers').removeClass('searchQuery');
+				$('section.trackers').removeClass('searchQuery');
 			}
 
 			else {
 				$('section#trackers section.tracker').each(function(index, tracker) {
-					var trackerName = $(this).find('h4').text().toLowerCase();
+					var trackerName = $(this).data('host').toLowerCase();
 
-					$('section#trackers').addClass('searchQuery');
-
-					console.log($(this));
+					$('section.trackers').addClass('searchQuery');
 
 					if (trackerName.indexOf(value) != -1 || trackerName == '') {
 						$(this).addClass('result');
@@ -722,7 +697,7 @@ var Listener = {
 	selectTorrent: function() {
 		$('section.torrents section.torrent a.selectTorrent').unbind();
 
-		$('section.torrents section.torrent a.selectTorrent').click(function() {
+		$('section.torrents section.torrent:not(.hidden) a.selectTorrent, section.torrents.searchQuery section.torrent.result a.selectTorrent').click(function() {
 			var element = $(this).parent().parent();
 			element.toggleClass('selected');
 		});
@@ -754,7 +729,7 @@ var Listener = {
 						}
 					},
 					function(response) {
-						toast('Torrent started.', 1000);
+						Materialize.toast('Torrent started.', 1000, 'rounded');
 					});
 				});
 			}
@@ -774,61 +749,61 @@ var Listener = {
 						}
 					},
 					function(response) {
-						toast('Torrent stopped.', 1000);
+						Materialize.toast('Torrent stopped.', 1000, 'rounded');
 					});
 				});
 			}
 		}
 	},
 
-	torrentPagination: function() {
-		$('section.torrentPagination a.previousPage, section.torrentPagination a.nextPage').unbind();
+	toggleTorrentPage: function(pageID) {
+		if ($('section.torrentSearch input.search').val().length == 0) {
+			$('section.torrents section.torrent').addClass('hidden');
 
-		function changeTorrentDisplay(pageID) {
-			if ($('section.search input.search').val().length == 0) {
-				$('section.torrents section.torrent').addClass('hidden');
+			var torrents = $('section.torrents section.torrent').length;
+			var torrentStart = (pageID - 1) * Listener.showPerPage;
+			var torrentEnd = (pageID * Listener.showPerPage) - 1;
 
-				var torrents = $('section.torrents section.torrent').length;
-				var torrentStart = (pageID - 1) * 20;
-				var torrentEnd = (pageID * 20) - 1;
+			$('section.torrents section.torrent').each(function(index, torrent) {
+				if (index >= torrentStart && index <= torrentEnd) {
+					$(this).removeClass('hidden');
+				}
 
-				$('section.torrents section.torrent').each(function(index, torrent) {
-					if (index >= torrentStart && index <= torrentEnd) {
-						$(this).removeClass('hidden');
-					}
-
-					else {
-						$(this).addClass('hidden');
-					}
-				});
-			}
+				else {
+					$(this).addClass('hidden');
+				}
+			});
 		}
+	},
 
-		changeTorrentDisplay($('section.torrentPagination a.pageInfo span.currentPage').text());
+	torrentPagination: function() {
+		$('section.torrentPagination button.previousPage, section.torrentPagination button.nextPage').unbind();
 
-		var currentPage = parseInt($('section.torrentPagination a.pageInfo span.currentPage').text());
-		var totalPages = parseInt($('section.torrentPagination a.pageInfo span.totalPages').text());
+		Listener.toggleTorrentPage($('section.torrentPagination button.pageInfo span.currentPage').text());
+
+		var currentPage = parseInt($('section.torrentPagination button.pageInfo span.currentPage').text());
+		var totalPages = parseInt($('section.torrentPagination button.pageInfo span.totalPages').text());
 
 		if (currentPage > totalPages) {	
-			changeTorrentDisplay(totalPages);
-			$('section.torrentPagination a.pageInfo span.currentPage').text(totalPages);
+			Listener.toggleTorrentPage(totalPages);
+			$('section.torrentPagination button.pageInfo span.currentPage').text(totalPages);
 		}
 
-		$('section.torrentPagination a.previousPage').click(function() {
-			var newPage = parseInt($('section.torrentPagination a.pageInfo span.currentPage').text()) - 1;
+		$('section.torrentPagination button.previousPage').click(function() {
+			var newPage = parseInt($('section.torrentPagination button.pageInfo span.currentPage').text()) - 1;
 
 			if (newPage > 0) {
-				changeTorrentDisplay(newPage);
-				$('section.torrentPagination a.pageInfo span.currentPage').text(newPage);
+				Listener.toggleTorrentPage(newPage);
+				$('section.torrentPagination button.pageInfo span.currentPage').text(newPage);
 			}
 		});
 
-		$('section.torrentPagination a.nextPage').click(function() {
-			var newPage = parseInt($('section.torrentPagination a.pageInfo span.currentPage').text()) + 1;
+		$('section.torrentPagination button.nextPage').click(function() {
+			var newPage = parseInt($('section.torrentPagination button.pageInfo span.currentPage').text()) + 1;
 
-			if (newPage < parseInt($('section.torrentPagination a.pageInfo span.totalPages').text()) + 1) {
-				changeTorrentDisplay(newPage);
-				$('section.torrentPagination a.pageInfo span.currentPage').text(newPage);
+			if (newPage < parseInt($('section.torrentPagination button.pageInfo span.totalPages').text()) + 1) {
+				Listener.toggleTorrentPage(newPage);
+				$('section.torrentPagination button.pageInfo span.currentPage').text(newPage);
 			}
 		});
 	},
@@ -845,23 +820,7 @@ var Listener = {
 	showCredits: function() {
 		$('section.floatingOptions ul li a.credits').unbind();
 		$('section.floatingOptions ul li a.credits').click(function() {
-			$('section.credits').animate({
-				right: '0%'
-			}, 300);
-
-			setTimeout(function() { $('section.clickToClose').css('padding', (($(window).height() - $('section.clickToClose').height()) / 4) + 'px 0px ' + (($(window).height() - $('section.clickToClose').height()) / 4 * 3) + 'px 0px'); }, 100);
-
-			$('section.sidebarOverflow').removeClass('hidden');
-
-			$('section.sidebarOverflow').unbind();
-			$('section.sidebarOverflow').click(function() {
-				$('section.credits').animate({
-					right: '-100%'
-				}, 300);
-
-				$('section.sidebarOverflow').addClass('hidden');
-			});
-
+			Sidebar.open('credits');
 		})
 	},
 }

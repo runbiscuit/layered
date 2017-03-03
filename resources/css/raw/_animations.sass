@@ -1,0 +1,53 @@
+@keyframe header-translateY
+	0%
+		opacity: 0
+		transform: translateY(20px)
+	100%
+		opacity: 1
+		transform: translateY(0px)
+
+@keyframe fadeInOut
+	0%
+		opacity: 0
+	50%
+		opacity: 1
+	100% 
+		opacity: 0
+
+@keyframe rotation
+	0%
+		transform: rotate(0deg)
+	
+	100%
+		transform: rotate(270deg)
+
+@keyframe turn
+	0%
+		stroke-dashoffset: 187
+
+	50%
+		stroke-dashoffset: 46.75
+		transform: rotate(135deg)
+
+	100%
+		stroke-dashoffset: 187
+		transform: rotate(450deg)
+
+section.loading
+	text-align: center
+
+	h1 
+		margin: 0px 0px 10px 0px
+
+	.circle
+		stroke-dasharray: 187
+		stroke-dashoffset: 0
+		transform-origin: center
+		animation-name: turn
+		animation-duration: 1.4s
+		animation-iteration-count: infinite
+
+	.spinner
+		animation-name: rotation
+		animation-duration: 1.4s
+		animation-iteration-count: infinite

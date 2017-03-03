@@ -10,7 +10,7 @@ var Formatter = {
 
 	size_K: 1000,
 	size_B_str: 'B',
-	size_K_str: 'kB',
+	size_K_str: 'KB',
 	size_M_str: 'MB',
 	size_G_str: 'GB',
 	size_T_str: 'TB',
@@ -28,38 +28,6 @@ var Formatter = {
 
 	date: function(timestamp) {
 		return new Date(timestamp * 1000);
-	},
-
-	event: function(statusCode) {
-		if (statusCode == 0) {
-			// torrent has been stopped or paused
-
-			if (torrent.error != 0) {
-				return 'Error: ' + torrent.errorString + ' [' + torrent.error + ']';
-			}
-
-			else {
-				return 'Paused';
-			}
-		}
-
-		else if (statusCode == 3) {
-			// 3: torrent has been queued
-
-			return 'Queued';
-		}
-
-		else if (statusCode == 4) {
-			// 4: torrent is downloading
-
-			return 'Downloading';
-		}
-
-		else if (statusCode == 6 || statusCode == 8) {
-			// 6 & 8: torrent is seeding (see https://forum.transmissionbt.com/viewtopic.php?t=13357#p60235)
-
-			return 'Seeding';
-		}
 	},
 
 	filePriority: function(number) {
@@ -171,5 +139,45 @@ var Formatter = {
 		convertedSize = Math.round(convertedSize * 100) / 100;
 
 		return convertedSize + unit;
+	},
+
+	event: function(statusCode) {
+		switch (statusCode) {
+			case 0:
+				return 'Paused';
+				break;
+
+			case 1:
+				return 'Queued for verification';
+				break;
+
+			case 2:
+				return 'Verifying local data';
+				break;
+
+			case 3:
+				return 'Queued';
+				break;
+
+			case 4:
+				return 'Downloaded';
+				break;
+
+			case 5:
+				return 'Downloaded, queued for seeding';
+				break;
+
+			case 6:
+				return 'Seeding';
+				break;
+
+			case 8:
+				return 'Seeding';
+				break;
+
+			default:
+				return 'Unknown';
+				break;
+		}
 	},
 }
