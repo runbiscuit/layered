@@ -61,8 +61,9 @@ var Listener = {
 			TransmissionServer.sendServerRequest({
 				method: 'session-get'
 			}, function(response) {
-				$('section.sidebar section.settings table').html('');
+				TransmissionServer._waitLock = true;
 
+				$('section.sidebar section.settings table').html('');
 				response = response.arguments;
 
 				$.each(response, function(index, value) {
@@ -112,6 +113,8 @@ var Listener = {
 				});
 
 				Listener.updateSettingsButton();
+
+				TransmissionServer._waitLock = false;
 			});
 		}
 
@@ -146,8 +149,9 @@ var Listener = {
 			method: 'session-stats', 
 			arguments: [ "activeTorrentCount", "downloadSpeed", "pausedTorrentCount", "torrentCount", "uploadSpeed", "current-stats" ]
 		}, function(response) {
-			response = response.arguments;
+			TransmissionServer._waitLock = true;
 
+			response = response.arguments;
 			$('section.topBar p.additionalData span.bandwidth').text('D: ' + Formatter.speed(response.downloadSpeed) + ' | U: ' + Formatter.speed(response.uploadSpeed));
 
 			$('section.sidebar section.statistics table tr td.activeTorrents').text(response.activeTorrentCount);
@@ -156,6 +160,8 @@ var Listener = {
 			$('section.sidebar section.statistics table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' this session)');
 			$('section.sidebar section.statistics table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' this session)');
 			$('section.sidebar section.statistics table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' this session)');
+
+			TransmissionServer._waitLock = false;
 		});
 	},
 
@@ -517,6 +523,7 @@ var Listener = {
 		Listener.lastRefresh = Date.now();
 
 		TransmissionServer.sendServerRequest(o, function(response) {
+			TransmissionServer._waitLock = true;
 			torrents = response.arguments.torrents;
 
 			if ($('section.torrentPagination a.pageInfo span.currentPage').text() == '') {
@@ -585,6 +592,8 @@ var Listener = {
 			Listener.getMoreTorrentDetails();
 			Listener.selectTorrent();
 			Listener.torrentPagination();
+
+			TransmissionServer._waitLock = false;
 		});
 	},
 
