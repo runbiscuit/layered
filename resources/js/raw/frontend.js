@@ -108,7 +108,7 @@ var Sidebar = {
 	}
 }
 
-$(document).ready(function() {
+$(window).on('load', function() {
 	// MaterializeCSS Functionality
 	$('ul.tabs').tabs();
 	$(".tooltipped").tooltip();
