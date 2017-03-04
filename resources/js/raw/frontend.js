@@ -1,7 +1,20 @@
 var activeTab = 'all';
+var session = Storages.initNamespaceStorage('layeredWebUI').localStorage;
 
-var filterBar = {
-	init: function() {
+var TopBar = {
+	statistics: function() {
+		$('section.topBar p.additionalData span.statistics').unbind();
+		$('section.topBar p.additionalData span.statistics').click(function() {
+			Sidebar.open('statistics');
+
+			$('section.sidebarOverflow').click(function() {
+				clearInterval(Listener.sessionStatsInterval);
+				$('section.sidebarOverflow').unbind();
+			});
+		});
+	},
+
+	filterBar: function() {
 		$('section.header ul li').click(function() {
 			var odd = true;
 
@@ -38,7 +51,7 @@ var filterBar = {
 	}
 };
 
-var floatingButtonHelper = {
+var FloatingButtonHelper = {
 	init: function() {
 		$('section.floatingActions ul, section.floatingOptions ul').addClass('hidden');
 
@@ -96,18 +109,22 @@ var Sidebar = {
 }
 
 $(document).ready(function() {
+	// MaterializeCSS Functionality
 	$('ul.tabs').tabs();
+	$(".tooltipped").tooltip();
 
-	floatingButtonHelper.init(); // stop tooltips and buttons from being clicked when not shown
+	TopBar.statistics(); // initializes the statistics button
+	TopBar.filterBar(); // initializes the filter bar
+	FloatingButtonHelper.init(); // stop tooltips and buttons from being clicked when not shown
+
+	Configurator.set(); // set session properties saved by user previously
+	Listener.setIntervals(); // set interval to get torrents & statistics
 
 	Listener.addTorrent(); // initializes the addTorrent button
-	Listener.getTorrents(); // gets torrents
-	Listener.updateSettings(); // updates settings
-	Listener.updateStatistics(); // updates bandwidth
+	Listener.updateSettings(); // updates settings (one-time)
 	Listener.searchTorrent(); // initializes the search torrent feature
 	Listener.searchTracker(); // initializes the search tracker feature
 	Listener.toggleSpeedLimitButton(); // initializes the speed limit button
-	filterBar.init(); // initializes the filterBar
 	Listener.showCredits(); // initializes the credits
 
 	TransmissionServer.getSettings();

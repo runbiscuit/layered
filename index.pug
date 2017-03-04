@@ -9,41 +9,41 @@ html
 		title Transmission Web Interface
 	body.grey.darken-4
 		section.fixed-action-btn.floatingOptions.click-to-toggle
-			a.btn-floating.btn-large.purple.hover(data-type='settings')
+			a.btn-floating.btn-large.purple.hover
 				i.large.material-icons settings
 			ul
-				li
+				li.tooltipped(data-tooltip='Credits' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.cyan.credits
 						i.material-icons person
-				li
-					a.btn.btn-floating.waves-effect.waves-light.brown.settings
-						i.material-icons settings_applications
-				li
+				li.tooltipped(data-tooltip='Toggle Speed Limit Mode' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.red.speedLimitMode
 						i.material-icons network_check
-				li
-					a.btn.btn-floating.waves-effect.waves-light.teal.addTorrent
-						i.material-icons note_add
+				li.tooltipped(data-tooltip='Settings' data-position='left' data-delay="50")
+					a.btn.btn-floating.waves-effect.waves-light.brown.settings
+						i.material-icons settings_applications
 
 		section.fixed-action-btn.floatingActions.click-to-toggle
 			a.btn-floating.btn-large.purple.hover(data-type='actions')
 				i.large.material-icons open_in_browser
 			ul
-				li
+				li.tooltipped(data-tooltip='Start' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.green(data-action='Start')
 						i.material-icons play_arrow
-				li
+				li.tooltipped(data-tooltip='Stop' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.red(data-action='Pause')
 						i.material-icons stop
-				li
+				li.tooltipped(data-tooltip='Verify Local Data' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.light-blue(data-action='Verify')
 						i.material-icons done_all
-				li
+				li.tooltipped(data-tooltip='Ask tracker for more peers' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.teal(data-action='Ask tracker for more peers')
 						i.material-icons update
-				li
+				li.tooltipped(data-tooltip='Delete' data-position='left' data-delay="50")
 					a.btn.btn-floating.waves-effect.waves-light.red(data-action='Remove')
 						i.material-icons delete
+				li.tooltipped(data-tooltip='Add Torrent' data-position='left' data-delay="50")
+					a.btn.btn-floating.waves-effect.waves-light.teal(data-action='add')
+						i.material-icons note_add
 
 		section.topBar.blue.darken-3.grid-container
 			p.mobile-grid-100.tablet-grid-50.grid-40 Transmission Web Interface
@@ -75,7 +75,7 @@ html
 			button.btn.waves-button.waves-effect.white.previousPage.black-text
 				i.material-icons.left keyboard_arrow_left
 				| Prev Page
-			button.btn.waves-button.waves-effect.cyan.darken-1.pageInfo.white-text
+			a.btn.waves-button.waves-effect.cyan.darken-1.pageInfo.white-text.tooltipped.modal-trigger(href='#viewOptions' data-position='bottom' data-delay='50' data-tooltip='Click to modify view options')
 				| Page 
 				span.currentPage
 				|  of 
@@ -374,3 +374,38 @@ html
 				section.card-action
 					a.getMoreDetails More Details...
 					a.selectTorrent Select...
+
+		section.modals
+			section.modal#viewOptions
+				section.modal-content
+					h4 View Options
+
+					section.input-field
+						p.grey-text View Type
+						p
+							input#view-grid(type='radio' name='view' value='grid')
+							label(for='view-grid') Grid (default)
+						p
+							input#view-list(type='radio' name='view' value='list')
+							label(for='view-list') List
+
+					br
+
+					section.input-field
+						select.page#pageSelector
+						label(for='pageSelector') Page #
+
+					br
+
+					section.input-field
+						select.viewPerPage#viewPerPage
+							option(value='2') 2
+							option(value='10') 10
+							option(value='20') 20 (default)
+							option(value='50') 50
+							option(value='100') 100
+							option(value='900719925474099') All
+						label(for='viewPerPage') Torrents Per Page
+
+				section.modal-footer
+					a.modal-action.modal-close.waves-effect.waves-dark.btn-flat(href='#!') Go

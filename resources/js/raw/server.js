@@ -25,7 +25,7 @@ var TransmissionServer = {
 		if (TransmissionServer._waitLock) {
 			setTimeout(function() {
 				TransmissionServer.sendServerRequest(data, callback);
-			}, 500);
+			}, 250);
 		}
 
 		else {
@@ -57,8 +57,6 @@ var TransmissionServer = {
 		var o = { method: 'session-get' };
 
 		TransmissionServer.sendServerRequest(o, function(response) {
-			console.log(response);
-
 			Formatter.units = response.arguments.units;
 
 			if (response.arguments['alt-speed-enabled']) {

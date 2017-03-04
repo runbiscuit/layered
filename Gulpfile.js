@@ -54,6 +54,7 @@ gulp.task('js', function() {
 			gulp.src([
 				'bower_components/jquery/dist/jquery.min.js',
 				'bower_components/materialize/bin/materialize.js',
+				'bower_components/js-storage/js.storage.js',
 				// 'bower_components/Waves/dist/waves.min.js'
 			]), gulp.src(UGLIFY_INPUT_FILES)
 		)

@@ -24,6 +24,7 @@
     "materialize": "^0.98.0",
     "bourbon": "^4.3.0",
     "unsemantic": "https://github.com/theroyalstudent/unsemantic-100-grid.git",
-    "materialIcons": "https://google-fonts.azurewebsites.net/googleFonts/GoogleFont-MaterialIcons?family=Material+Icons"
+    "materialIcons": "https://google-fonts.azurewebsites.net/googleFonts/GoogleFont-MaterialIcons?family=Material+Icons",
+    "js-storage": "https://github.com/julien-maurel/js-storage.git#^1.0.2"
   }
 }
