@@ -1,9 +1,9 @@
 var Configuration = {
-	// torrent refresh interval (default: 500)
-	torrentRefreshInterval: 500,
+	// torrent refresh interval (default: 1250)
+	torrentRefreshInterval: 1250,
 
-	// session information (default: 500)
-	sessionRefreshInterval: 500,
+	// session information (default: 10000)
+	sessionRefreshInterval: 10000,
 
 	// torrents to show on every page (default: 20)
 	torrentsPerPage: 20,
