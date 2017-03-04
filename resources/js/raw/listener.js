@@ -190,16 +190,22 @@ var Listener = {
 		$('section.floatingActions a[data-action="add"]').click(function() {
 			Sidebar.open('addTorrent');
 
-			$('input#startAutomatically').prop('checked', true);
+			$('section.sidebar section.addTorrent input#startAutomatically').prop('checked', true);
 
 			function addTorrentLink() {
-				if ($('input.torrentLink').val() !== '') {
+				if ($('section.sidebar section.addTorrent input.torrentLink').val() !== '') {
+					args = {
+						'filename': $('section.sidebar section.addTorrent input.torrentLink').val(),
+						'paused': !$('section.sidebar section.addTorrent input#startAutomatically').prop('checked')
+					};
+
+					if ($('section.sidebar section.addTorrent input.torrentDirectory').val().length != 0) {
+						args['download-dir'] = $('section.sidebar section.addTorrent input.torrentDirectory').val();
+					}
+
 					TransmissionServer.sendServerRequest({
 						method: 'torrent-add',
-						arguments: {
-							'filename': $('input.torrentLink').val(),
-							'paused': !$('input#startAutomatically').prop('checked')
-						}
+						arguments: args
 					}, function(response) {
 						if (response.result != 'success') {
 							Materialize.toast('Error adding torrent: ' + response.result, 2000, 'rounded');
@@ -209,8 +215,8 @@ var Listener = {
 							Materialize.toast('Torrent added!', 2000, 'rounded');
 						}
 
-						$('input.torrentLink').val('');
-						$('input.torrentFile').prop('files', []);
+						$('section.sidebar section.addTorrent input.torrentLink').val('');
+						$('section.sidebar section.addTorrent input.torrentFile').prop('files', []);
 					});
 				}
 			}
@@ -233,12 +239,18 @@ var Listener = {
 							file = (file.indexOf('base64,') > -1) ? file.substring(file.indexOf('base64,') + 7) : false;
 
 							if (file != false) {
+								args = {
+									'metainfo': file,
+									'paused': !$('section.sidebar section.addTorrent input#startAutomatically').prop('checked')
+								};
+
+								if ($('section.sidebar section.addTorrent input.torrentDirectory').val().length != 0) {
+									args['download-dir'] = $('section.sidebar section.addTorrent input.torrentDirectory').val();
+								}
+
 								TransmissionServer.sendServerRequest({
 									method: 'torrent-add',
-									arguments: {
-										'metainfo': file,
-										'paused': !$('input#startAutomatically').prop('checked')
-									}
+									arguments: args
 								}, function(response) {
 									if (response.result != 'success') {
 										console.log(file);

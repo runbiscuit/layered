@@ -283,15 +283,25 @@ html
 				section.head
 					h3 Add Torrent...
 				section.addTorrentForm
-					.file-field.input-field
+					section.file-field.input-field.grid-container
 						.btn
 							span File
 							input(type='file' multiple).torrentFile
 						.file-path-wrapper
-							input.file-path.validate(type='text').torrentFilePathDisplay.grid-50
-						input(name='torrentLink' placeholder='Torrent URL or magnet: link').torrentLink.grid-50
-					input(type='checkbox')#startAutomatically
-					label(for='startAutomatically' checked) Start Automatically
+							input.file-path.validate(type='text' placeholder='Select one or more .torrent files').torrentFilePathDisplay.grid-50
+					
+					section.input-field
+						input(name='torrentLink' placeholder='optional').torrentLink#torrentLink
+						label(for='torrentLink').active Torrent URL or magnet: Link
+					
+					section.input-field
+						input(name='torrentDirectory' placeholder='Leave empty for blank').torrentDirectory#torrentDirectory
+						label(for='torrentDirectory').active Destination Directory
+					
+					p
+						input(type='checkbox')#startAutomatically
+						label(for='startAutomatically' checked) Start Automatically
+
 					section.buttonTray
 						a.btn.waves-button.waves-effect.addTorrent Add Torrent
 
