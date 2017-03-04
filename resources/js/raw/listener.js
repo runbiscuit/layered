@@ -1,7 +1,7 @@
 var Listener = {
-	statisticsInterval: '',
+	sessionStatsInterval: null,
+	torrentGetInterval: null,
 	lastRefresh: 1000,
-	showPerPage: 20,
 
 	/*
 					 _       _              _   _                _       _       
@@ -142,39 +142,21 @@ var Listener = {
 	*/
 
 	updateStatistics: function() {
-		$('section.topBar p.additionalData span.statistics').unbind();
-		$('section.topBar p.additionalData span.statistics').click(function() {
-			Sidebar.open('statistics');
+		TransmissionServer.sendServerRequest({
+			method: 'session-stats', 
+			arguments: [ "activeTorrentCount", "downloadSpeed", "pausedTorrentCount", "torrentCount", "uploadSpeed", "current-stats" ]
+		}, function(response) {
+			response = response.arguments;
 
-			$('section.sidebarOverflow').click(function() {
-				clearInterval(Listener.statisticsInterval);
-				$('section.sidebarOverflow').unbind();
-			});
+			$('section.topBar p.additionalData span.bandwidth').text('D: ' + Formatter.speed(response.downloadSpeed) + ' | U: ' + Formatter.speed(response.uploadSpeed));
+
+			$('section.sidebar section.statistics table tr td.activeTorrents').text(response.activeTorrentCount);
+			$('section.sidebar section.statistics table tr td.pausedTorrents').text(response.pausedTorrentCount);
+			$('section.sidebar section.statistics table tr td.totalDownloaded').text(Formatter.size(response['cumulative-stats'].downloadedBytes) + ' (' + Formatter.size(response['current-stats'].downloadedBytes) + ' this session)');
+			$('section.sidebar section.statistics table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' this session)');
+			$('section.sidebar section.statistics table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' this session)');
+			$('section.sidebar section.statistics table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' this session)');
 		});
-
-		function updateStatistics() {
-			TransmissionServer.sendServerRequest({
-				method: 'session-stats', 
-				arguments: [ "activeTorrentCount", "downloadSpeed", "pausedTorrentCount", "torrentCount", "uploadSpeed", "current-stats" ]
-			}, function(response) {
-				response = response.arguments;
-
-				$('section.topBar p.additionalData span.bandwidth').text('D: ' + Formatter.speed(response.downloadSpeed) + ' | U: ' + Formatter.speed(response.uploadSpeed));
-
-				$('section.sidebar section.statistics table tr td.activeTorrents').text(response.activeTorrentCount);
-				$('section.sidebar section.statistics table tr td.pausedTorrents').text(response.pausedTorrentCount);
-				$('section.sidebar section.statistics table tr td.totalDownloaded').text(Formatter.size(response['cumulative-stats'].downloadedBytes) + ' (' + Formatter.size(response['current-stats'].downloadedBytes) + ' this session)');
-				$('section.sidebar section.statistics table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' this session)');
-				$('section.sidebar section.statistics table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' this session)');
-				$('section.sidebar section.statistics table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' this session)');
-			});
-		}
-
-		updateStatistics();
-
-		Listener.statisticsInterval = setInterval(function() { 
-			updateStatistics();
-		}, 1000);
 	},
 
 	/*
@@ -204,8 +186,8 @@ var Listener = {
 	},
 
 	addTorrent: function() {
-		$('section.floatingOptions a.addTorrent').unbind();
-		$('section.floatingOptions a.addTorrent').click(function() {
+		$('section.floatingActions a[data-action="add"]').unbind();
+		$('section.floatingActions a[data-action="add"]').click(function() {
 			Sidebar.open('addTorrent');
 
 			$('input#startAutomatically').prop('checked', true);
@@ -298,8 +280,8 @@ var Listener = {
 			"Close": 'close'
 		};
 
-		$('section.floatingActions ul a').unbind();
-		$('section.floatingActions ul a').click(function() {
+		$('section.floatingActions ul a:not([data-action="add"]').unbind();
+		$('section.floatingActions ul a:not([data-action="add"]').click(function() {
 			var id = [];
 			var action = actions[$(this).data('action')];
 
@@ -525,13 +507,13 @@ var Listener = {
 		TransmissionServer.sendServerRequest(o, function(response) {
 			torrents = response.arguments.torrents;
 
-			if ($('section.torrentPagination button.pageInfo span.currentPage').text() == '') {
-				$('section.torrentPagination button.pageInfo span.currentPage').text('1');
+			if ($('section.torrentPagination a.pageInfo span.currentPage').text() == '') {
+				$('section.torrentPagination a.pageInfo span.currentPage').text('1');
 			}
 
-			var totalPages = Math.floor(torrents.length / Listener.showPerPage);
-			(torrents.length % Listener.showPerPage > 0) ? totalPages++ : false;
-			$('section.torrentPagination button.pageInfo span.totalPages').text(totalPages);
+			var totalPages = Math.floor(torrents.length / Configuration.torrentsPerPage);
+			(torrents.length % Configuration.torrentsPerPage > 0) ? totalPages++ : false;
+			$('section.torrentPagination a.pageInfo span.totalPages').text(totalPages);
 
 			$.each(torrents, function(index, torrent) {
 				torrent.totalEver = Formatter.size(torrent.downloadedEver + torrent.uploadedEver);
@@ -592,8 +574,6 @@ var Listener = {
 			Listener.selectTorrent();
 			Listener.torrentPagination();
 		});
-
-		setTimeout(function() { Listener.getTorrents(); }, 1250);
 	},
 
 	removeTorrent: function(ids) {
@@ -761,8 +741,8 @@ var Listener = {
 			$('section.torrents section.torrent').addClass('hidden');
 
 			var torrents = $('section.torrents section.torrent').length;
-			var torrentStart = (pageID - 1) * Listener.showPerPage;
-			var torrentEnd = (pageID * Listener.showPerPage) - 1;
+			var torrentStart = (pageID - 1) * Configuration.torrentsPerPage;
+			var torrentEnd = (pageID * Configuration.torrentsPerPage) - 1;
 
 			$('section.torrents section.torrent').each(function(index, torrent) {
 				if (index >= torrentStart && index <= torrentEnd) {
@@ -773,39 +753,100 @@ var Listener = {
 					$(this).addClass('hidden');
 				}
 			});
+
+			$('section.torrentPagination a.pageInfo span.currentPage').text(pageID);
 		}
 	},
 
 	torrentPagination: function() {
+		// initialize buttons for previous / next page
+
 		$('section.torrentPagination button.previousPage, section.torrentPagination button.nextPage').unbind();
 
-		Listener.toggleTorrentPage($('section.torrentPagination button.pageInfo span.currentPage').text());
+		Listener.toggleTorrentPage($('section.torrentPagination a.pageInfo span.currentPage').text());
 
-		var currentPage = parseInt($('section.torrentPagination button.pageInfo span.currentPage').text());
-		var totalPages = parseInt($('section.torrentPagination button.pageInfo span.totalPages').text());
+		var currentPage = parseInt($('section.torrentPagination a.pageInfo span.currentPage').text());
+		var totalPages = parseInt($('section.torrentPagination a.pageInfo span.totalPages').text());
 
 		if (currentPage > totalPages) {	
 			Listener.toggleTorrentPage(totalPages);
-			$('section.torrentPagination button.pageInfo span.currentPage').text(totalPages);
+			$('section.torrentPagination a.pageInfo span.currentPage').text(totalPages);
 		}
 
 		$('section.torrentPagination button.previousPage').click(function() {
-			var newPage = parseInt($('section.torrentPagination button.pageInfo span.currentPage').text()) - 1;
+			var newPage = parseInt($('section.torrentPagination a.pageInfo span.currentPage').text()) - 1;
 
 			if (newPage > 0) {
 				Listener.toggleTorrentPage(newPage);
-				$('section.torrentPagination button.pageInfo span.currentPage').text(newPage);
 			}
 		});
 
 		$('section.torrentPagination button.nextPage').click(function() {
-			var newPage = parseInt($('section.torrentPagination button.pageInfo span.currentPage').text()) + 1;
+			var newPage = parseInt($('section.torrentPagination a.pageInfo span.currentPage').text()) + 1;
 
-			if (newPage < parseInt($('section.torrentPagination button.pageInfo span.totalPages').text()) + 1) {
+			if (newPage <= parseInt($('section.torrentPagination a.pageInfo span.totalPages').text())) {
 				Listener.toggleTorrentPage(newPage);
-				$('section.torrentPagination button.pageInfo span.currentPage').text(newPage);
 			}
 		});
+
+		// initialize modals
+
+		$('section.modal#viewOptions').modal({
+			dismissible: false,
+			ready: function() {
+				// initialize all selectors in the view option modal
+				$('section.modal#viewOptions select').material_select();
+
+				// initialize page number option
+				$('section.modal#viewOptions select.page').material_select('destroy');
+				$('section.modal#viewOptions select.page').html('');
+
+				for (var i = 1; i <= parseInt($('section.torrentPagination a.pageInfo span.totalPages').text()); i++) {
+					if (i == parseInt($('section.torrentPagination a.pageInfo span.currentPage').text())) {
+						$('section.modal#viewOptions select.page').append('<option value="' + i + '" selected>Page ' + i + ' (current)</option>');
+					}
+
+					else {
+						$('section.modal#viewOptions select.page').append('<option value="' + i + '">Page ' + i + '</option>');
+					}
+				}
+
+				$('section.modal#viewOptions select.page').material_select();
+
+				// initialize view per page option
+				$('section.modal#viewOptions select.viewPerPage').material_select('destroy');
+				$('section.modal#viewOptions select.viewPerPage option[value="' + Configuration.torrentsPerPage + '"]').attr('selected', 'selected');
+				$('section.modal#viewOptions select.viewPerPage').material_select();
+
+				// initialize torrent view option
+				$('section.modal#viewOptions input[name="view"][value="' + Configuration.torrentView + '"]').attr('checked', 'checked');
+			},
+
+			complete: function() {
+				// set torrents per page according to input (into session)
+				Configuration.torrentsPerPage = session.set('torrentsPerPage', parseInt($('section.modal#viewOptions select.viewPerPage').val()));
+				Configuration.torrentView = session.set('torrentView', $('section.modal#viewOptions input[name="view"]:checked').val());
+
+				// apply changes to the page
+				Listener.toggleTorrentPage(parseInt($('section.modal#viewOptions select.page').val()));
+				$('section.torrents').attr('view', Configuration.torrentView);
+
+				Listener.getTorrents();
+			}
+		})
+	},
+
+	/*
+
+	*/
+
+	setIntervals: function() {
+		Listener.updateStatistics();
+		Listener.getTorrents();
+
+		setTimeout(function() {
+			Listener.setIntervals();
+		}, Configuration.torrentRefreshInterval);
 	},
 
 	/*

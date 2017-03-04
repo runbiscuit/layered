@@ -141,9 +141,15 @@ body
 
 		section.torrents
 			padding: 0 0 2vh 0
-			display: flex
-			flex-direction: row
-			flex-wrap: wrap
+			
+			&[view='grid']
+				display: flex
+				flex-direction: row
+				flex-wrap: wrap
+
+			&[view='list']
+				section.torrent:not(.stacked)
+					width: 100% !important
 
 			&.downloading
 				section.torrent:not(.downloading)
@@ -173,7 +179,7 @@ body
 				section.torrent:not(.result)
 					display: none !important
 
-			&:not(.searchQuery)
+			&:not(.searchQuery)[view='grid']
 				section.torrent:not(.stacked)
 					&:nth-child(even)
 						@extend .prefix-2
@@ -558,6 +564,13 @@ body
 
 			i.material-icons
 				font-size: 160px
+
+	section.modals
+		section.modal#viewOptions
+			max-width: 30vw
+
+			input.select-dropdown
+				margin: 0
 
 	.material-tooltip
 		z-index: 100000
