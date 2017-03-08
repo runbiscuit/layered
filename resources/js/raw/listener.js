@@ -124,7 +124,16 @@ var Listener = {
 	updateSettingsButton: function() {
 		$('section.sidebar section.settings a.updateSettingsButton').unbind();
 		$('section.sidebar section.settings a.updateSettingsButton').click(function() {
-			var args = $('section.sidebar section.settings table tr td input:not(disabled)').serializeArray();
+		var args = {};
+		$('section.sidebar section.settings table tr td input:not(disabled)').serializeArray().map(function(x){
+			if (typeof x.value == 'number') {
+				args[x.name] = parseInt(x.value);
+			}
+
+			else {
+				args[x.name] = x.value;
+			}
+		});
 
 			TransmissionServer.sendServerRequest({
 				method: 'session-set',
