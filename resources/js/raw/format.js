@@ -2,25 +2,8 @@ var Formatter = {
 	units: '',
 
 	speed_K: 1000,
-	speed_B_str: 'B/s',
-	speed_K_str: 'kB/s',
-	speed_M_str: 'MB/s',
-	speed_G_str: 'GB/s',
-	speed_T_str: 'TB/s',
-
 	size_K: 1000,
-	size_B_str: 'B',
-	size_K_str: 'KB',
-	size_M_str: 'MB',
-	size_G_str: 'GB',
-	size_T_str: 'TB',
-
 	mem_K: 1024,
-	mem_B_str: 'B',
-	mem_K_str: 'KiB',
-	mem_M_str: 'MiB',
-	mem_G_str: 'GiB',
-	mem_T_str: 'TiB',
 
 	duration: function(seconds) {
 		return new Date(seconds * 1000).toTimeString().replace(/.*(\d{2}:\d{2}:\d{2}).*/, "$1");
@@ -31,9 +14,9 @@ var Formatter = {
 	},
 
 	filePriority: function(number) {
-		if (number == -1) { return 'Low'; }
-		if (number == 0) { return 'Normal'; }
-		if (number == 1) { return 'High'; }
+		if (number == -1) { return i18n.units.low; }
+		if (number == 0) { return i18n.units.normal; }
+		if (number == 1) { return i18n.units.high; }
 	},
 
 	percentageDone: function(leftUntilDone, totalSize) {
@@ -42,7 +25,7 @@ var Formatter = {
 
 	mem: function(bytes) {
 		if (bytes < Formatter.mem_K)
-			return [ bytes, Formatter.mem_B_str ].join(' ');
+			return [ bytes, i18n.units.mem_B_str ].join(' ');
 
 		var convertedSize;
 		var unit;
@@ -54,17 +37,17 @@ var Formatter = {
 
 		else if (bytes < Math.pow(Formatter.mem_K, 3)) {
 			convertedSize = bytes / Math.pow(Formatter.mem_K, 2);
-			unit = Formatter.mem_M_str;
+			unit = i18n.units.mem_M_str;
 		}
 
 		else if (bytes < Math.pow(mem_K, 4)) {
 			convertedSize = bytes / Math.pow(Formatter.mem_K, 3);
-			unit = Formatter.mem_G_str;
+			unit = i18n.units.mem_G_str;
 		}
 
 		else {
 			convertedSize = bytes / Math.pow(Formatter.mem_K, 4);
-			unit = Formatter.mem_T_str;
+			unit = i18n.units.mem_T_str;
 		}
 
 		convertedSize = Math.round(convertedSize * 100) / 100;
@@ -79,7 +62,7 @@ var Formatter = {
 
 	size: function(bytes) {
 		if (bytes < Formatter.size_K)
-			return [ bytes, Formatter.size_B_str ].join(' ');
+			return [ bytes, i18n.units.size_B_str ].join(' ');
 
 		var convertedSize;
 		var unit;
@@ -91,17 +74,17 @@ var Formatter = {
 
 		else if (bytes < Math.pow(Formatter.size_K, 3)) {
 			convertedSize = bytes / Math.pow(Formatter.size_K, 2);
-			unit = Formatter.size_M_str;
+			unit = i18n.units.size_M_str;
 		}
 
 		else if (bytes < Math.pow(Formatter.size_K, 4)) {
 			convertedSize = bytes / Math.pow(Formatter.size_K, 3);
-			unit = Formatter.size_G_str;
+			unit = i18n.units.size_G_str;
 		}
 
 		else {
 			convertedSize = bytes / Math.pow(Formatter.size_K, 4);
-			unit = Formatter.size_T_str;
+			unit = i18n.units.size_T_str;
 		}
 
 		convertedSize = Math.round(convertedSize * 100) / 100;
@@ -111,7 +94,7 @@ var Formatter = {
 
 	speed: function(bytes) {
 		if (bytes < Formatter.speed_K)
-			return [ bytes, Formatter.speed_B_str ].join(' ');
+			return [ bytes, i18n.units.speed_B_str ].join(' ');
 
 		var convertedSize;
 		var unit;
@@ -123,17 +106,17 @@ var Formatter = {
 
 		else if (bytes < Math.pow(Formatter.speed_K, 3)) {
 			convertedSize = bytes / Math.pow(Formatter.speed_K, 2);
-			unit = Formatter.speed_M_str;
+			unit = i18n.units.speed_M_str;
 		}
 
 		else if (bytes < Math.pow(speed_K, 4)) {
 			convertedSize = bytes / Math.pow(Formatter.speed_K, 3);
-			unit = Formatter.speed_G_str;
+			unit = i18n.units.speed_G_str;
 		}
 
 		else {
 			convertedSize = bytes / Math.pow(Formatter.speed_K, 4);
-			unit = Formatter.speed_T_str;
+			unit = i18n.units.speed_T_str;
 		}
 
 		convertedSize = Math.round(convertedSize * 100) / 100;
@@ -144,39 +127,39 @@ var Formatter = {
 	event: function(statusCode) {
 		switch (statusCode) {
 			case 0:
-				return 'Paused';
+				return i18n.event.paused;
 				break;
 
 			case 1:
-				return 'Queued for verification';
+				return i18n.event.queuedForVerification;
 				break;
 
 			case 2:
-				return 'Verifying local data';
+				return i18n.event.verifyingLocalData;
 				break;
 
 			case 3:
-				return 'Queued';
+				return i18n.event.queued;
 				break;
 
 			case 4:
-				return 'Downloaded';
+				return i18n.event.downloaded;
 				break;
 
 			case 5:
-				return 'Downloaded, queued for seeding';
+				return i18n.event.downloadedQueuedForSeeding;
 				break;
 
 			case 6:
-				return 'Seeding';
+				return i18n.event.seeding;
 				break;
 
 			case 8:
-				return 'Seeding';
+				return i18n.event.seeding;
 				break;
 
 			default:
-				return 'Unknown';
+				return i18n.event.unknown;
 				break;
 		}
 	},
