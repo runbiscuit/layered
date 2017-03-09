@@ -124,16 +124,20 @@ var Listener = {
 	updateSettingsButton: function() {
 		$('section.sidebar section.settings a.updateSettingsButton').unbind();
 		$('section.sidebar section.settings a.updateSettingsButton').click(function() {
-		var args = {};
-		$('section.sidebar section.settings table tr td input:not(disabled)').serializeArray().map(function(x){
-			if (typeof x.value == 'number') {
-				args[x.name] = parseInt(x.value);
-			}
+			var args = {};
+			$('section.sidebar section.settings table tr td input:not(disabled):not(:checkbox)').serializeArray().map(function(x){
+				if (typeof x.value != 'boolean' && typeof parseInt(x.value) == 'number' && !isNaN(parseInt(x.value))) {
+					args[x.name] = parseInt(x.value);
+				}
 
-			else {
-				args[x.name] = x.value;
-			}
-		});
+				else {
+					args[x.name] = x.value;
+				}
+			});
+
+			$("section.sidebar section.settings table tr td input:checkbox").each(function(){
+				args[this.name] = this.checked;
+			});
 
 			TransmissionServer.sendServerRequest({
 				method: 'session-set',
@@ -527,7 +531,7 @@ var Listener = {
 	},
 
 	getTorrents: function() {
-		var o = { method: 'torrent-get', "arguments": { "fields": [ "id", "name", "status", "totalSize", "sizeWhenDone", "haveValid", "leftUntilDone", "haveUnchecked", "eta", "downloadedEver", "uploadedEver", "uploadRatio", "rateDownload", "rateUpload", "metadataPercentComplete", "addedDate", "trackerStats", "error", "errorString", "recheckProgress", "bandwidthPriority", "seedRatioMode", "seedRatioLimit" ] } };
+		var o = { method: 'torrent-get', "arguments": { "fields": [ "id", "name", "status", "totalSize", "sizeWhenDone", "leftUntilDone", "eta", "downloadedEver", "uploadedEver", "uploadRatio", "rateDownload", "rateUpload", "trackerStats", "error", "errorString", "bandwidthPriority" ] } };
 		var errored = false;
 		Listener.lastRefresh = Date.now();
 
