@@ -1,6 +1,6 @@
 var i18n;
 
-var Localisation = {
+var Internationalizations = {
 	setSupportedLanguages: function() {
 		// figure out what languages are supported
 		$('section.modal#viewOptions select.language').html('');
@@ -25,7 +25,7 @@ var Localisation = {
 
 		if (eval("typeof " + language) !== 'undefined') {
 			i18n = eval(language);
-			if (!shutup) Materialize.toast(i18n.localisation.changingLanguagePack + LanguageCodes[language] + i18n.localisation.changingLanguagePackAfter, 1000, 'rounded');
+			if (!shutup) Materialize.toast(i18n.internationalization.changingLanguagePack + LanguageCodes[language] + i18n.internationalization.changingLanguagePackAfter, 1000, 'rounded');
 
 			$('*[i18n-text]').each(function(index, target) {
 				text = eval($(this).attr('i18n-text'));
@@ -43,15 +43,15 @@ var Localisation = {
 				$(target).attr('data-tooltip', textBefore + text + textAfter);
 			});
 
-			if (!shutup) Materialize.toast(i18n.localisation.changedLanguagePack, 1000, 'rounded');
+			if (!shutup) Materialize.toast(i18n.internationalization.changedLanguagePack, 1000, 'rounded');
 		}
 
 		else {
-			if (!shutup) Materialize.toast(i18n.localisation.languagePackNotAvailable, 1000, 'rounded');
+			if (!shutup) Materialize.toast(i18n.internationalization.languagePackNotAvailable, 1000, 'rounded');
 			
 			setTimeout(function() {
-				Materialize.toast(i18n.localisation.attemptingLanguagePack + LanguageCodes[Configuration.language], 1000, 'rounded');
-				Localisation.changeLanguage(Configuration.language);
+				Materialize.toast(i18n.internationalization.attemptingLanguagePack + LanguageCodes[Configuration.language], 1000, 'rounded');
+				Internationalization.changeLanguage(Configuration.language);
 			}, 500);
 		}
 

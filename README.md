@@ -47,8 +47,25 @@ Feel free to make pull requests to the `develop` branch, and for any bugs, pleas
 To install the dependencies used to build resources:
 
 ```
+bower install
 npm install
 ```
+
+You would need [bower](https://bower.io/) and [npmjs](https://www.npmjs.com/) to be installed on your machine before you begin.
+
+### Building the code
+To build the resources as you edit the code, you may run `gulp launch`, and terminate it with `Ctrl-C (Mac)` when you're done.
+
+### Contributing Internationalizations
+To add a new internationalizations, duplicate the `resources/js/i18n/en.js` file to `resources/js/i18n/[LANGUAGE].js`, where `LANGUAGE` is the [ISO 639-1 Code](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) of the language.
+You may then edit the new language file accordingly.
+
+_**Do note that if you have `gulp launch` already running, you need to restart it and save the file, otherwise the file would not picked up by the watch process.**_
+
+_// side note: the web interface will automatically pick up on which languages have a internationalizations available for it, thus there is nothing else to configure, when adding a new internationalizations file._
+
+### Pushing code back to the upstream
+Before making your commit and pull request, run `gulp build --production` to build the minified resources.
 
 ## Credits
 * [@theroyalstudent](https://github.com/theroyalstudent) for the rewritten interface.

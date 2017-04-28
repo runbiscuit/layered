@@ -828,7 +828,7 @@ var Listener = {
 				$('section.modal#viewOptions input[name="view"][value="' + Configuration.torrentView + '"]').attr('checked', 'checked');
 
 				// initialize supported language option
-				Localisation.setSupportedLanguages();
+				Internationalization.setSupportedLanguages();
 			},
 
 			complete: function() {
@@ -839,7 +839,7 @@ var Listener = {
 
 				// apply changes to the page
 				$('section.torrents').attr('view', Configuration.torrentView);
-				Localisation.changeLanguage(Configuration.language);
+				Internationalization.changeLanguage(Configuration.language);
 
 				Listener.toggleTorrentPage(parseInt($('section.modal#viewOptions select.page').val()));
 

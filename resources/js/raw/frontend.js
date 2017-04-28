@@ -111,7 +111,7 @@ var Sidebar = {
 $(window).on('load', function() {
 	Configurator.set(); // set session properties saved by user previously
 
-	Localisation.changeLanguage(Configuration.language, function() {
+	Internationalization.changeLanguage(Configuration.language, function() {
 		$('section.torrents').attr('view', Configuration.torrentView);
 
 		$('ul.tabs').tabs();
@@ -131,5 +131,5 @@ $(window).on('load', function() {
 		Listener.showCredits(); // initializes the credits
 
 		TransmissionServer.getSettings();
-	}, true); // true to make sure that localisation shuts up
+	}, true); // true to make sure that Internationalization shuts up
 });

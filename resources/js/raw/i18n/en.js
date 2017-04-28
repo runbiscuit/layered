@@ -1,8 +1,8 @@
 // ENGLISH LANGUAGE PACK FOR LAYERED
 // DEFAULT LANGUAGE FOR A STOCK INSTALL OF LAYERED
 var en = {
-	// i18n (_localisation.js)
-	localisation: {
+	// i18n (_internationalization.js)
+	internationalization: {
 		changingLanguagePack: 'Changing language pack to ',
 		changingLanguagePackAfter: '...',
 

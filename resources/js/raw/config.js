@@ -11,7 +11,7 @@ var Configuration = {
 	// torrent view
 	torrentView: 'grid',
 
-	// language (i18n/_localisation.js - default: en)
+	// language (i18n/_internationalization.js - default: en)
 	language: 'en'
 };
 
