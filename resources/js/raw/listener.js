@@ -421,8 +421,27 @@ var Listener = {
 		// https://github.com/transmission/transmission/blob/4c00df9463ea4fd70b73c620e439f5c3ee5efa60/web/javascript/torrent.js#L375
 		// (transmission web interface, torrent.js)
 
+		if (torrent.error !== 0) {
+			// regardless of status, if error > 0, regard it as an error
+			
+			if (torrent.error == 1) {
+				torrentMessageElement.text(i18n.event.trackerWarning);
+			}
+
+			else if (torrent.error == 2) {
+				torrentMessageElement.text(i18n.event.trackerError);
+			}
+
+			else {
+				torrentMessageElement.text(i18n.event.error);
+			}
+
+			torrentMessageElement.text(torrentMessageElement.text() + torrent.errorString + ' [#' + torrent.error + ']');
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
+		}
+
 		// torrent coloring and message
-		if (statusCode === 0) {
+		else if (statusCode === 0) {
 			// torrent has been paused
 
 			torrentMessageElement.text(Formatter.event(statusCode));
@@ -456,7 +475,7 @@ var Listener = {
 		else if (statusCode == 6 || statusCode == 8) {
 			// 6 & 8: torrent is seeding (see https://forum.transmissionbt.com/viewtopic.php?t=13357#p60235)
 
-			torrentMessageElement.text(Formatter.event(statusCode) + ': ' + Formatter.speed(torrent.rateUpload) + '');
+			torrentMessageElement.text(Formatter.event(statusCode) + ': ' + Formatter.speed(torrent.rateUpload));
 			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('seeding');
 		}
 
@@ -464,26 +483,6 @@ var Listener = {
 			// assume status to be unknown if no known value is returned
 
 			torrentMessageElement.text(Formatter.event(statusCode));
-			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
-		}
-
-		if (torrent.error !== 0) {
-			// regardless of status, if error > 0, regard it as an error
-			
-			if (torrent.error == 1) {
-				torrentMessageElement.text(i18n.event.trackerWarning);
-			}
-
-			else if (torrent.error == 2) {
-				torrentMessageElement.text(i18n.event.trackerError);
-			}
-
-
-			else {
-				torrentMessageElement.text(i18n.event.error);
-			}
-
-			torrentMessageElement.text(torrentMessageElement.text() + torrent.errorString + ' [#' + torrent.error + ']');
 			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
 		}
 
