@@ -23,7 +23,7 @@ var PUG_DIR = './',
 	SASS_DIR_OUTPUT = SASS_DIR + '/*.css',
 
 	UGLIFY_DIR = './resources/js',
-	UGLIFY_INPUT_FILES = UGLIFY_DIR + '/raw/*.js',
+	UGLIFY_INPUT_FILES = UGLIFY_DIR + '/raw/**/*.js',
 	UGLIFY_OUTPUT_FILES = UGLIFY_DIR;
 
 gulp.task('pug', function () {

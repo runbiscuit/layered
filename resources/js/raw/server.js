@@ -43,12 +43,10 @@ var TransmissionServer = {
 			return;
 		}
 
-		TransmissionServer._error = request.responseText
-						? request.responseText.trim().replace(/(<([^>]+)>)/ig,"")
-						: "";
+		TransmissionServer._error = request.responseText ? request.responseText.trim().replace(/(<([^>]+)>)/ig,"") : "";
 
 		if (!TransmissionServer._error.length)
-			TransmissionServer._error = 'Server not responding, retrying in 2.5 seconds...';
+			TransmissionServer._error = i18n.server.notResponding;
 
 		Materialize.toast(TransmissionServer._error, 2500, 'rounded');
 	},
@@ -70,4 +68,4 @@ var TransmissionServer = {
 			}
 		});
 	}
-}
+};

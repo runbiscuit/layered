@@ -61,8 +61,9 @@ var Listener = {
 			TransmissionServer.sendServerRequest({
 				method: 'session-get'
 			}, function(response) {
-				$('section.sidebar section.settings table').html('');
+				TransmissionServer._waitLock = true;
 
+				$('section.sidebar section.settings table').html('');
 				response = response.arguments;
 
 				$.each(response, function(index, value) {
@@ -76,7 +77,7 @@ var Listener = {
 
 					else {
 						if (typeof value == 'boolean') {
-							$('section.sidebar section.settings table').append('<tr><td>' + index + '</td><td><div class="switch"><label>Off<input type="checkbox" name="' + index + '"><span class="lever"></span>On</label></div></td></tr>');
+							$('section.sidebar section.settings table').append('<tr><td>' + index + '</td><td><div class="switch"><label>' + i18n.status.off + '<input type="checkbox" name="' + index + '"><span class="lever"></span>' + i18n.status.on + '</label></div></td></tr>');
 							$('section.sidebar section.settings table input[type="checkbox"][name="' + index + '"]').prop('checked', value);
 							$('section.sidebar section.settings table input[type="checkbox"][name="' + index + '"]').val(value);
 						}
@@ -112,6 +113,8 @@ var Listener = {
 				});
 
 				Listener.updateSettingsButton();
+
+				TransmissionServer._waitLock = false;
 			});
 		}
 
@@ -121,13 +124,26 @@ var Listener = {
 	updateSettingsButton: function() {
 		$('section.sidebar section.settings a.updateSettingsButton').unbind();
 		$('section.sidebar section.settings a.updateSettingsButton').click(function() {
-			var args = $('section.sidebar section.settings table tr td input:not(disabled)').serializeArray();
+			var args = {};
+			$('section.sidebar section.settings table tr td input:not(disabled):not(:checkbox)').serializeArray().map(function(x){
+				if (typeof x.value != 'boolean' && typeof parseInt(x.value) == 'number' && !isNaN(parseInt(x.value))) {
+					args[x.name] = parseInt(x.value);
+				}
+
+				else {
+					args[x.name] = x.value;
+				}
+			});
+
+			$("section.sidebar section.settings table tr td input:checkbox").each(function(){
+				args[this.name] = this.checked;
+			});
 
 			TransmissionServer.sendServerRequest({
 				method: 'session-set',
 				arguments: args
 			}, function(response) {
-				Materialize.toast('Success!', 500, 'rounded');
+				Materialize.toast(i18n.status.success, 500, 'rounded');
 			});
 		});
 	},
@@ -146,16 +162,19 @@ var Listener = {
 			method: 'session-stats', 
 			arguments: [ "activeTorrentCount", "downloadSpeed", "pausedTorrentCount", "torrentCount", "uploadSpeed", "current-stats" ]
 		}, function(response) {
-			response = response.arguments;
+			TransmissionServer._waitLock = true;
 
-			$('section.topBar p.additionalData span.bandwidth').text('D: ' + Formatter.speed(response.downloadSpeed) + ' | U: ' + Formatter.speed(response.uploadSpeed));
+			response = response.arguments;
+			$('section.topBar p.additionalData span.bandwidth').text('| ' + Formatter.speed(response.downloadSpeed) + ' ⬇ ' + Formatter.speed(response.uploadSpeed) + ' ⬆');
 
 			$('section.sidebar section.statistics table tr td.activeTorrents').text(response.activeTorrentCount);
 			$('section.sidebar section.statistics table tr td.pausedTorrents').text(response.pausedTorrentCount);
-			$('section.sidebar section.statistics table tr td.totalDownloaded').text(Formatter.size(response['cumulative-stats'].downloadedBytes) + ' (' + Formatter.size(response['current-stats'].downloadedBytes) + ' this session)');
-			$('section.sidebar section.statistics table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' this session)');
-			$('section.sidebar section.statistics table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' this session)');
-			$('section.sidebar section.statistics table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' this session)');
+			$('section.sidebar section.statistics table tr td.totalDownloaded').text(Formatter.size(response['cumulative-stats'].downloadedBytes) + ' (' + Formatter.size(response['current-stats'].downloadedBytes) + ' ' + i18n.misc.thisSession + ')');
+			$('section.sidebar section.statistics table tr td.totalUploaded').text(Formatter.size(response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.size(response['current-stats'].uploadedBytes) + ' ' + i18n.misc.thisSession + ')');
+			$('section.sidebar section.statistics table tr td.ratio').text(Formatter.ratio(response['cumulative-stats'].downloadedBytes, response['cumulative-stats'].uploadedBytes) + ' (' + Formatter.ratio(response['current-stats'].downloadedBytes, response['current-stats'].uploadedBytes) + ' ' + i18n.misc.thisSession + ')');
+			$('section.sidebar section.statistics table tr td.uptime').text(Formatter.duration(response['cumulative-stats'].secondsActive) + ' (' + Formatter.duration(response['current-stats'].secondsActive) + ' ' + i18n.misc.thisSession + ')');
+
+			TransmissionServer._waitLock = false;
 		});
 	},
 
@@ -175,11 +194,11 @@ var Listener = {
 			TransmissionServer.sendServerRequest({
 				method: 'session-set', 
 				arguments: {
-					'alt-speed-enabled': ($('a.speedLimitMode').hasClass('green')) ? true : false
 					// green means that alt-speed is not enabled
+					'alt-speed-enabled': ($('a.speedLimitMode').hasClass('green')) ? true : false
 				}
 			}, function(response) {
-				Materialize.toast('Success!', 500, 'rounded');
+				Materialize.toast(i18n.status.success, 500, 'rounded');
 				TransmissionServer.getSettings();
 			});
 		});
@@ -208,11 +227,11 @@ var Listener = {
 						arguments: args
 					}, function(response) {
 						if (response.result != 'success') {
-							Materialize.toast('Error adding torrent: ' + response.result, 2000, 'rounded');
+							Materialize.toast(i18n.status.errorAddingTorrent + response.result, 2000, 'rounded');
 						}
 
 						else {
-							Materialize.toast('Torrent added!', 2000, 'rounded');
+							Materialize.toast(i18n.status.torrentAdded, 2000, 'rounded');
 						}
 
 						$('section.sidebar section.addTorrent input.torrentLink').val('');
@@ -254,11 +273,11 @@ var Listener = {
 								}, function(response) {
 									if (response.result != 'success') {
 										console.log(file);
-										Materialize.toast('Error adding torrent: ' + response.result, 2000, 'rounded');
+										Materialize.toast(i18n.status.errorAddingTorrent + response.result, 2000, 'rounded');
 									}
 
 									else {
-										Materialize.toast('Torrent added!', 2000, 'rounded');
+										Materialize.toast(i18n.status.torrentAdded, 2000, 'rounded');
 									}
 								});
 							}
@@ -314,7 +333,7 @@ var Listener = {
 						ids: id
 					}
 				}, function(response) {
-					Materialize.toast('Success!', 500, 'rounded');
+					Materialize.toast(i18n.status.success, 500, 'rounded');
 				});
 			}
 
@@ -340,7 +359,7 @@ var Listener = {
 						'files-wanted': [ fileId ]
 					}
 				}, function(response) {
-					Materialize.toast('Success!', 500, 'rounded');
+					Materialize.toast(i18n.status.success, 500, 'rounded');
 				});
 			}
 
@@ -352,7 +371,7 @@ var Listener = {
 						'files-unwanted': [ fileId ]
 					}
 				}, function(response) {
-					Materialize.toast('Success!', 500, 'rounded');
+					Materialize.toast(i18n.status.success, 500, 'rounded');
 				});
 			}
 		});
@@ -382,7 +401,7 @@ var Listener = {
 				}
 			}, function(response) {
 				$('#Materialize.toast-container').css('z-index', 100001);
-				Materialize.toast('Success!', 500, 'rounded');
+				Materialize.toast(i18n.status.success, 500, 'rounded');
 				setTimeout(function() { $('#Materialize.toast-container').css('z-index', 10000); }, 550);
 			});
 
@@ -397,86 +416,111 @@ var Listener = {
 		});
 	},
 
-	changeTorrentColors: function(id, statusCode, torrent, element, messageElement) {
+	changeTorrentProperties: function(id, statusCode, torrent, torrentElement, torrentSwitchElement, torrentMessageElement) {
 		// adapted code from:
 		// https://github.com/transmission/transmission/blob/4c00df9463ea4fd70b73c620e439f5c3ee5efa60/web/javascript/torrent.js#L375
 		// (transmission web interface, torrent.js)
-
-		if (statusCode === 0) {
-			// torrent has been paused
-
-			messageElement.text('Paused');
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('paused');
-		}
-
-		else if (statusCode == 1 || statusCode == 2 || statusCode == 3) {
-			// 1: torrent has been queued for verification
-
-			if (statusCode == 1) {
-				messageElement.text('Queued for verification');
-			}
-
-			// 2: torrent data is verifying
-
-			if (statusCode == 2) {
-				messageElement.text('Verifying local data');
-			}
-
-			// 3: torrent has been queued
-
-			if (statusCode == 3) {
-				messageElement.text('Queued');
-			}
-
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('queued');
-		}
-
-		else if (statusCode == 4) {
-			// 4: torrent is downloading
-
-			messageElement.text('Downloading: ' + Formatter.speed(torrent.rateDownload) + ', Seeding: ' + Formatter.speed(torrent.rateUpload));
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('downloading');
-		}
-
-		else if (statusCode == 5) {
-			// 5: torrent is queued for seeding
-
-			messageElement.text('Downloaded, queued for seeding');
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('queued');
-		}
-
-		else if (statusCode == 6 || statusCode == 8) {
-			// 6 & 8: torrent is seeding (see https://forum.transmissionbt.com/viewtopic.php?t=13357#p60235)
-
-			messageElement.text('Seeding: ' + Formatter.speed(torrent.rateUpload) + '');
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('seeding');
-		}
-
-		else {
-			// assume status to be unknown if no known value is returned
-
-			messageElement.text('Unknown');
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
-		}
 
 		if (torrent.error !== 0) {
 			// regardless of status, if error > 0, regard it as an error
 			
 			if (torrent.error == 1) {
-				messageElement.text('Tracker Warning: ');
+				torrentMessageElement.text(i18n.event.trackerWarning);
 			}
 
 			else if (torrent.error == 2) {
-				messageElement.text('Tracker Error: ');
+				torrentMessageElement.text(i18n.event.trackerError);
 			}
-
 
 			else {
-				messageElement.text('Error: ');
+				torrentMessageElement.text(i18n.event.error);
 			}
 
-			messageElement.text(messageElement.text() + torrent.errorString + ' [#' + torrent.error + ']');
-			element.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
+			torrentMessageElement.text(i18n.event.error + ': ' + torrent.errorString + ' [#' + torrent.error + ']');
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
+		}
+
+		// torrent coloring and message
+		else if (statusCode === 0) {
+			// torrent has been paused
+
+			torrentMessageElement.text(Formatter.event(statusCode));
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('paused');
+		}
+
+		else if (statusCode == 1 || statusCode == 2 || statusCode == 3) {
+			// 1: torrent has been queued for verification
+			// 2: torrent data is verifying
+			// 3: torrent has been queued
+
+			torrentMessageElement.text(Formatter.event(statusCode));
+
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('queued');
+		}
+
+		else if (statusCode == 4) {
+			// 4: torrent is downloading
+
+			torrentMessageElement.text(Formatter.event(statusCode) + ': ' + Formatter.speed(torrent.rateDownload) + ', ' + Formatter.event(6) + ': ' + Formatter.speed(torrent.rateUpload));
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('downloading');
+		}
+
+		else if (statusCode == 5) {
+			// 5: torrent is queued for seeding
+
+			torrentMessageElement.text(Formatter.event(statusCode));
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('queued');
+		}
+
+		else if (statusCode == 6 || statusCode == 8) {
+			// 6 & 8: torrent is seeding (see https://forum.transmissionbt.com/viewtopic.php?t=13357#p60235)
+
+			torrentMessageElement.text(Formatter.event(statusCode) + ': ' + Formatter.speed(torrent.rateUpload));
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('seeding');
+		}
+
+		else {
+			// assume status to be unknown if no known value is returned
+
+			torrentMessageElement.text(Formatter.event(statusCode));
+			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
+		}
+
+		// torrent toggle (play/pause)
+		torrentSwitchElement.text((statusCode === 0) ? 'play_arrow' : 'stop');
+
+		if (torrentSwitchElement.data('statusCode') !== statusCode) {
+			torrentSwitchElement.unbind();
+
+			if (statusCode == 0) {
+				// torrent has been stopped or paused
+				torrentSwitchElement.click(function() {
+					TransmissionServer.sendServerRequest({
+						method: 'torrent-start',
+						arguments: {
+							'ids': id
+						}
+					},
+					function(response) {
+						Materialize.toast(i18n.event.started, 1000, 'rounded');
+					});
+				});
+			}
+
+			else {
+				// torrent is not stopped nor paused
+				torrentSwitchElement.click(function() {
+					TransmissionServer.sendServerRequest({
+						method: 'torrent-stop',
+						arguments: {
+							'ids': id
+						}
+					},
+					function(response) {
+						Materialize.toast(i18n.event.stopped, 1000, 'rounded');
+					});
+				});
+			}
 		}
 	},
 
@@ -512,11 +556,12 @@ var Listener = {
 	},
 
 	getTorrents: function() {
-		var o = { method: 'torrent-get', "arguments": { "fields": [ "id", "name", "status", "totalSize", "sizeWhenDone", "haveValid", "leftUntilDone", "haveUnchecked", "eta", "downloadedEver", "uploadedEver", "uploadRatio", "rateDownload", "rateUpload", "metadataPercentComplete", "addedDate", "trackerStats", "error", "errorString", "recheckProgress", "bandwidthPriority", "seedRatioMode", "seedRatioLimit" ] } };
+		var o = { method: 'torrent-get', "arguments": { "fields": [ "id", "name", "status", "totalSize", "sizeWhenDone", "leftUntilDone", "eta", "downloadedEver", "uploadedEver", "uploadRatio", "rateDownload", "rateUpload", "trackerStats", "error", "errorString", "bandwidthPriority" ] } };
 		var errored = false;
 		Listener.lastRefresh = Date.now();
 
 		TransmissionServer.sendServerRequest(o, function(response) {
+			TransmissionServer._waitLock = true;
 			torrents = response.arguments.torrents;
 
 			if ($('section.torrentPagination a.pageInfo span.currentPage').text() == '') {
@@ -534,8 +579,11 @@ var Listener = {
 				torrent.percentageDone = Formatter.percentageDone(torrent.leftUntilDone, torrent.totalSize);
 				torrent.uploadRatio = Math.round((torrent.uploadRatio) * 100) / 100;
 
-				Listener.changeTorrentColors(torrent.id, torrent.status, torrent, $('section.torrents section.torrent[data-id="' + torrent.id + '"]'), $('section.torrents section.torrent[data-id="' + torrent.id + '"] p.message'));
-				Listener.toggleTorrentStatus(torrent.id, torrent.status, torrent, $('section.torrents section.torrent[data-id="' + torrent.id + '"] i.material-icons.toggle'));
+				torrentElement = $('section.torrents section.torrent[data-id="' + torrent.id + '"]');
+				torrentSwitchElement = $('section.torrents section.torrent[data-id="' + torrent.id + '"] i.material-icons.toggle');
+				torrentMessageElement = $('section.torrents section.torrent[data-id="' + torrent.id + '"] p.message');
+
+				Listener.changeTorrentProperties(torrent.id, torrent.status, torrent, torrentElement, torrentSwitchElement, torrentMessageElement);
 
 				if ($('section.torrents section.torrent[data-id="' + torrent.id + '"]').length) {
 					$('section.torrents section.torrent[data-id="' + torrent.id + '"] h3.torentName span.name').text(torrent.torrentName);
@@ -565,8 +613,6 @@ var Listener = {
 					$('section.torrents section.torrent.unset section.progress section.intermediate').css('width', torrent.percentageDone);
 
 					$('section.torrents section.torrent.unset').removeClass('unset');
-
-					Listener.changeTorrentColors(torrent.id, torrent.status, torrent, $('section.torrents section.torrent[data-id="' + torrent.id + '"]'), $('section.torrents section.torrent[data-id="' + torrent.id + '"] p.message'));
 				}
 
 				if (torrent.error !== 0) { errored = true; }
@@ -578,13 +624,15 @@ var Listener = {
 				}
 			});
 
-			if (errored) { $('section.header ul li[data-href="errored"]').fadeIn(); }
-			else { $('section.header ul li[data-href="errored"]').fadeOut(); }
+			if (errored) { $('section.header ul li[data-href="errored"]').css('visibility', 'visible'); }
+			else { $('section.header ul li[data-href="errored"]').css('visibility', 'hidden'); }
 
 			Listener.batchOperations();
 			Listener.getMoreTorrentDetails();
 			Listener.selectTorrent();
 			Listener.torrentPagination();
+
+			TransmissionServer._waitLock = false;
 		});
 	},
 
@@ -605,7 +653,7 @@ var Listener = {
 					'delete-local-data': $('section.sidebar section.removeTorrent input#deleteAllData').prop('checked')
 				}
 			}, function(response) {
-				Materialize.toast('Success!', 500, 'rounded');
+				Materialize.toast(i18n.status.success, 500, 'rounded');
 			});
 		})
 
@@ -695,59 +743,6 @@ var Listener = {
 		});
 	},
 
-	toggleTorrentStatus: function(id, statusCode, torrent, element) {
-		// unbind this element from any .click() events
-		element.unbind();
-
-		if (element.data('statusCode') != element) {
-			element.data('statusCode', element);
-
-			if (statusCode == 0) {
-				// torrent has been stopped or paused
-
-				if (torrent.error == 0) {
-					element.text('play_arrow');
-				}
-
-				else {
-					element.text('');
-				}
-
-				element.click(function() {
-					TransmissionServer.sendServerRequest({
-						method: 'torrent-start',
-						arguments: {
-							'ids': id
-						}
-					},
-					function(response) {
-						Materialize.toast('Torrent started.', 1000, 'rounded');
-					});
-				});
-			}
-
-			else if (statusCode == 3 || statusCode == 4 || statusCode == 6 || statusCode == 8) {
-				// 3: torrent has been queued
-				// 4: torrent is downloading
-				// 6 & 8: torrent is seeding (see https://forum.transmissionbt.com/viewtopic.php?t=13357#p60235)
-
-				element.text('stop');
-
-				element.click(function() {
-					TransmissionServer.sendServerRequest({
-						method: 'torrent-stop',
-						arguments: {
-							'ids': id
-						}
-					},
-					function(response) {
-						Materialize.toast('Torrent stopped.', 1000, 'rounded');
-					});
-				});
-			}
-		}
-	},
-
 	toggleTorrentPage: function(pageID) {
 		if ($('section.torrentSearch input.search').val().length == 0) {
 			$('section.torrents section.torrent').addClass('hidden');
@@ -802,7 +797,6 @@ var Listener = {
 		});
 
 		// initialize modals
-
 		$('section.modal#viewOptions').modal({
 			dismissible: false,
 			ready: function() {
@@ -815,37 +809,43 @@ var Listener = {
 
 				for (var i = 1; i <= parseInt($('section.torrentPagination a.pageInfo span.totalPages').text()); i++) {
 					if (i == parseInt($('section.torrentPagination a.pageInfo span.currentPage').text())) {
-						$('section.modal#viewOptions select.page').append('<option value="' + i + '" selected>Page ' + i + ' (current)</option>');
+						$('section.modal#viewOptions select.page').append('<option value="' + i + '" selected>' + i18n.htmlStrings.pagination.page + ' ' + i + ' ' + i18n.htmlStrings.viewOptions.current + '</option>');
 					}
 
 					else {
-						$('section.modal#viewOptions select.page').append('<option value="' + i + '">Page ' + i + '</option>');
+						$('section.modal#viewOptions select.page').append('<option value="' + i + '">' + i18n.htmlStrings.pagination.page + ' ' + i + '</option>');
 					}
 				}
 
 				$('section.modal#viewOptions select.page').material_select();
 
 				// initialize view per page option
-				$('section.modal#viewOptions select.viewPerPage').material_select('destroy');
-				$('section.modal#viewOptions select.viewPerPage option[value="' + Configuration.torrentsPerPage + '"]').attr('selected', 'selected');
-				$('section.modal#viewOptions select.viewPerPage').material_select();
+				$('section.modal#viewOptions select.torrentsPerPage').material_select('destroy');
+				$('section.modal#viewOptions select.torrentsPerPage option[value="' + Configuration.torrentsPerPage + '"]').attr('selected', 'selected');
+				$('section.modal#viewOptions select.torrentsPerPage').material_select();
 
 				// initialize torrent view option
 				$('section.modal#viewOptions input[name="view"][value="' + Configuration.torrentView + '"]').attr('checked', 'checked');
+
+				// initialize supported language option
+				Internationalization.setSupportedLanguages();
 			},
 
 			complete: function() {
-				// set torrents per page according to input (into session)
-				Configuration.torrentsPerPage = session.set('torrentsPerPage', parseInt($('section.modal#viewOptions select.viewPerPage').val()));
+				// set into session
+				Configuration.torrentsPerPage = session.set('torrentsPerPage', parseInt($('section.modal#viewOptions select.torrentsPerPage').val()));
 				Configuration.torrentView = session.set('torrentView', $('section.modal#viewOptions input[name="view"]:checked').val());
+				Configuration.language = session.set('language', $('section.modal#viewOptions select.language').val());
 
 				// apply changes to the page
-				Listener.toggleTorrentPage(parseInt($('section.modal#viewOptions select.page').val()));
 				$('section.torrents').attr('view', Configuration.torrentView);
+				Internationalization.changeLanguage(Configuration.language);
+
+				Listener.toggleTorrentPage(parseInt($('section.modal#viewOptions select.page').val()));
 
 				Listener.getTorrents();
 			}
-		})
+		});
 	},
 
 	/*
