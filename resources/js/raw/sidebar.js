@@ -73,7 +73,7 @@ var TorrentSidebar = {
 			$('section.sidebar section.torrentInformation section#information table td.size').text(Formatter.size(torrent.sizeWhenDone));
 			$('section.sidebar section.torrentInformation section#information table td.pieces').text(torrent.pieceCount + ' * ' + Formatter.size(torrent.pieceSize));
 			$('section.sidebar section.torrentInformation section#information table td.hash').text(torrent.hashString);
-			$('section.sidebar section.torrentInformation section#information table td.type').text((torrent.isPrivate) ? 'Private Torrent' : 'Public Torrent');
+			$('section.sidebar section.torrentInformation section#information table td.type').text((torrent.isPrivate) ? i18n.htmlStrings.sidebarView.tabs.information.type.privateTorrent : i18n.htmlStrings.sidebarView.tabs.information.type.publictorrent);
 			$('section.sidebar section.torrentInformation section#information table td.comment').text(torrent.comment);
 			$('section.sidebar section.torrentInformation section#information table td.createdWith').text(torrent.creator);
 
@@ -88,43 +88,59 @@ var TorrentSidebar = {
 			$('section.sidebar section.torrentInformation section#activity table span.uploadPeers').text(torrent.peersGettingFromUs);
 
 			$.each(torrent.trackerStats, function(index, tracker) {
-				var trackerElement = 'section.sidebar section.torrentInformation section#trackers section.trackers section.tracker[data-host="' + tracker.host + '"] ';
+				var trackerElement = 'section.sidebar section.torrentInformation section#trackers section.trackers section.tracker[data-host="' + tracker.host + '"]';
 
 				if (!$(trackerElement).length) {
-					$('section.sidebar section.torrentInformation section#trackers section.trackers').append('<section class="tracker" data-host="' + tracker.host + '"><h4>' + tracker.host + '</h4><table><tr><td>Last Announced:</td><td class="lastAnnounced"></td></tr><tr><td>Next Announced:</td><td class="nextAnnounced"></td></tr><tr><td>Last Scrape:</td><td class="lastScrape"></td></tr><tr><td>Seeders:</td><td class="seeders"></td></tr><tr><td>Leechers:</td><td class="leechers"></td></tr></table></section>');
+					$('section.elements section.tracker.unset').clone().appendTo('section.sidebar section.torrentInformation section#trackers section.trackers');
+					$('section.sidebar section.torrentInformation section#trackers section.trackers section.tracker.unset').attr('data-host', tracker.host).removeClass('unset');
 				}
 
-				else {
-					$(trackerElement + 'td.lastAnnounced').text(Formatter.date(tracker.lastAnnounceTime));
-					$(trackerElement + 'td.nextAnnounced').text(Formatter.date(tracker.nextAnnounceTime));
-					$(trackerElement + 'td.lastScrape').text(Formatter.date(tracker.lastScrapeTime));
-					$(trackerElement + 'td.seeders').text(tracker.seederCount);
-					$(trackerElement + 'td.leechers').text(tracker.leecherCount);
-				}
+				$(trackerElement + ' h4.host').text(tracker.host);
+				$(trackerElement + ' td.lastAnnounced').text(Formatter.date(tracker.lastAnnounceTime));
+				$(trackerElement + ' td.nextAnnounced').text(Formatter.date(tracker.nextAnnounceTime));
+				$(trackerElement + ' td.lastScrape').text(Formatter.date(tracker.lastScrapeTime));
+				$(trackerElement + ' td.seeders').text(tracker.seederCount);
+				$(trackerElement + ' td.leechers').text(tracker.leecherCount);
 			});
 
 			$('section.sidebar section.torrentInformation section#peers tr.peer').remove();
 
 			$.each(torrent.peers, function(index, peer) {
-				// console.log(peer);
+				var peerElement = 'section.sidebar section.torrentInformation section#peers table tr[data-host="' + peer.address + ':' + peer.port + '"]';
 
-				$('section.sidebar section.torrentInformation section#peers table').append('<tr class="peer"><td>' + peer.address + ':' + peer.port + '</td><td>' + peer.clientName + '</td><td>' + (peer.progress * 100) + '</td><td>' + Formatter.speed(peer.rateToClient) + '</td><td>' + Formatter.speed(peer.rateToPeer) + '</td></tr>');
+				if (!$(peerElement).length) {
+					$('section.elements tr.peer.unset').clone().appendTo('section.sidebar section.torrentInformation section#peers table');
+					$('section.sidebar section.torrentInformation section#peers table tr.unset').attr('data-host', peer.address + ':' + peer.port).removeClass('unset');
+				}
+
+				$(peerElement + ' td:nth-child(1)').text(peer.address + ':' + peer.port);
+				$(peerElement + ' td:nth-child(2)').text(peer.clientName);
+				$(peerElement + ' td:nth-child(3)').text(peer.progress * 100);
+				$(peerElement + ' td:nth-child(4)').text(Formatter.speed(peer.rateToClient));
+				$(peerElement + ' td:nth-child(5)').text(Formatter.speed(peer.rateToPeer));
 			});
 
 			$.each(torrent.files, function(index, file) {
-				// console.log(file);
-
-				var fileElement = 'section.sidebar section.torrentInformation section#files section.file[data-id="' + index + '"] ';
-
-				file.downloadFileCheckbox = '<input type="checkbox" id="downloadFile' + index + '" data-torrentId="' + torrent.id + '" data-fileId="' + index + '" ' + ((torrent.fileStats[index].wanted) ? 'checked' : '') + '><label for="downloadFile' + index + '">Download</label>';
+				var fileElement = 'section.sidebar section.torrentInformation section#files section.file[data-id="' + file + '"]';
 
 				if (!$(fileElement).length) {
-					$('section.sidebar section.torrentInformation section#files').append('<section class="file" data-id="' + index + '"><h4><span>' + file.name + '</span><span class="download">' + file.downloadFileCheckbox + '</span></h4><table><tr><td>Completed:</td><td class="completed">' + Formatter.percentageDone(file.bytesCompleted, file.length) + ' of ' + Formatter.size(file.length) + '</td></tr></table></section>');
+					$('section.elements section.file.unset').clone().appendTo('section.sidebar section.torrentInformation section#files');
+					$('section.sidebar section.torrentInformation section#files section.file.unset').attr('data-id', file);
+
+					$(fileElement + ' span.download input[type="checkbox"]').attr('id', 'downloadfile' + index).attr('data-torrentid', torrent.id).attr('data-fileid', index);
+					$(fileElement + ' span.download label').attr('for', 'downloadfile' + index);
+
+					$(fileElement + ' h4 span:nth-child(1)').text(file.name);
+
+					if (torrent.fileStats[index].wanted) {
+						$(fileElement + ' span.download input[type="checkbox"]').attr('checked', 'checked');
+					}
+
+					$(fileElement).removeClass('unset');
 				}
 
-				else {
-					$(fileElement + 'td.completed').text(Formatter.percentageDone(file.length - file.bytesCompleted, file.length) + ' of ' + Formatter.size(file.length));
-				}
+				// to be updated
+				$(fileElement + ' td.completed').text(Formatter.percentageDone(file.length - file.bytesCompleted, file.length) + i18n.htmlStrings.sidebarView.tabs.files.of + Formatter.size(file.length));
 			});
 
 			Listener.changeDownloadedFiles();
@@ -147,4 +163,4 @@ var TorrentSidebar = {
 			Listener.changeSettingsTorrent(torrent.id);
 		});
 	}
-}
+};

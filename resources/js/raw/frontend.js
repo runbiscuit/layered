@@ -106,26 +106,30 @@ var Sidebar = {
 
 		$('section.sidebarOverflow').addClass('hidden');
 	}
-}
+};
 
 $(window).on('load', function() {
-	// MaterializeCSS Functionality
-	$('ul.tabs').tabs();
-	$(".tooltipped").tooltip();
-
-	TopBar.statistics(); // initializes the statistics button
-	TopBar.filterBar(); // initializes the filter bar
-	FloatingButtonHelper.init(); // stop tooltips and buttons from being clicked when not shown
-
 	Configurator.set(); // set session properties saved by user previously
-	Listener.setIntervals(); // set interval to get torrents & statistics
 
-	Listener.addTorrent(); // initializes the addTorrent button
-	Listener.updateSettings(); // updates settings (one-time)
-	Listener.searchTorrent(); // initializes the search torrent feature
-	Listener.searchTracker(); // initializes the search tracker feature
-	Listener.toggleSpeedLimitButton(); // initializes the speed limit button
-	Listener.showCredits(); // initializes the credits
+	Localisation.changeLanguage(Configuration.language, function() {
+		$('section.torrents').attr('view', Configuration.torrentView);
 
-	TransmissionServer.getSettings();
+		$('ul.tabs').tabs();
+		$(".tooltipped").tooltip();
+
+		TopBar.statistics(); // initializes the statistics button
+		TopBar.filterBar(); // initializes the filter bar
+		FloatingButtonHelper.init(); // stop tooltips and buttons from being clicked when not shown
+		
+		Listener.setIntervals(); // set interval to get torrents & statistics
+
+		Listener.addTorrent(); // initializes the addTorrent button
+		Listener.updateSettings(); // updates settings (one-time)
+		Listener.searchTorrent(); // initializes the search torrent feature
+		Listener.searchTracker(); // initializes the search tracker feature
+		Listener.toggleSpeedLimitButton(); // initializes the speed limit button
+		Listener.showCredits(); // initializes the credits
+
+		TransmissionServer.getSettings();
+	}, true); // true to make sure that localisation shuts up
 });

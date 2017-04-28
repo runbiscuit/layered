@@ -10,7 +10,10 @@ var Configuration = {
 
 	// torrent view
 	torrentView: 'grid',
-}
+
+	// language (i18n/_localisation.js - default: en)
+	language: 'en'
+};
 
 var Configurator = {
 	set: function() {
@@ -18,7 +21,6 @@ var Configurator = {
 		Configuration.sessionRefreshInterval = (!session.isEmpty('sessionRefreshInterval')) ? session.get('sessionRefreshInterval') : Configuration.sessionRefreshInterval;
 		Configuration.torrentsPerPage = (!session.isEmpty('torrentsPerPage')) ? session.get('torrentsPerPage') : Configuration.torrentsPerPage;
 		Configuration.torrentView = (!session.isEmpty('torrentView')) ? session.get('torrentView') : Configuration.torrentView;
-
-		$('section.torrents').attr('view', Configuration.torrentView);
+		Configuration.language = (!session.isEmpty('language')) ? session.get('language') : Configuration.language;
 	}
-}
+};

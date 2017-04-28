@@ -6,19 +6,19 @@ html
 		link(type='text/css' rel='stylesheet' href='./resources/css/style.css')
 		link(type='text/css' rel='stylesheet' href='./bower_components/materialIcons/materialIcons.css')
 		script(type='text/javascript' src='./resources/js/app.min.js')
-		title Transmission Web Interface
+		title(i18n-text='i18n.htmlStrings.title') Transmission Web Interface
 	body.grey.darken-4
 		section.fixed-action-btn.floatingOptions.click-to-toggle
 			a.btn-floating.btn-large.purple.hover
 				i.large.material-icons settings
 			ul
-				li.tooltipped(data-tooltip='Credits' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Credits' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.credits')
 					a.btn.btn-floating.waves-effect.waves-light.cyan.credits
 						i.material-icons person
-				li.tooltipped(data-tooltip='Toggle Speed Limit Mode' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Toggle Speed Limit Mode' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.toggleSpeedLimitMode')
 					a.btn.btn-floating.waves-effect.waves-light.red.speedLimitMode
 						i.material-icons network_check
-				li.tooltipped(data-tooltip='Settings' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Settings' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.settings')
 					a.btn.btn-floating.waves-effect.waves-light.brown.settings
 						i.material-icons settings_applications
 
@@ -26,68 +26,68 @@ html
 			a.btn-floating.btn-large.purple.hover(data-type='actions')
 				i.large.material-icons open_in_browser
 			ul
-				li.tooltipped(data-tooltip='Start' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Start' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.start')
 					a.btn.btn-floating.waves-effect.waves-light.green(data-action='Start')
 						i.material-icons play_arrow
-				li.tooltipped(data-tooltip='Stop' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Stop' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.stop')
 					a.btn.btn-floating.waves-effect.waves-light.red(data-action='Pause')
 						i.material-icons stop
-				li.tooltipped(data-tooltip='Verify Local Data' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Verify Local Data' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.verifyLocalData')
 					a.btn.btn-floating.waves-effect.waves-light.light-blue(data-action='Verify')
 						i.material-icons done_all
-				li.tooltipped(data-tooltip='Ask tracker for more peers' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Ask tracker for more peers' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.askTrackerForMorePeers')
 					a.btn.btn-floating.waves-effect.waves-light.teal(data-action='Ask tracker for more peers')
 						i.material-icons update
-				li.tooltipped(data-tooltip='Delete' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Delete' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.delete')
 					a.btn.btn-floating.waves-effect.waves-light.red(data-action='Remove')
 						i.material-icons delete
-				li.tooltipped(data-tooltip='Add Torrent' data-position='left' data-delay="50")
+				li.tooltipped(data-tooltip='Add Torrent' data-position='left' data-delay="50" i18n-tooltip='i18n.htmlStrings.tooltips.addTorrent')
 					a.btn.btn-floating.waves-effect.waves-light.teal(data-action='add')
 						i.material-icons note_add
 
 		section.topBar.blue.darken-3.grid-container
-			p.mobile-grid-100.tablet-grid-50.grid-40 Transmission Web Interface
+			p.mobile-grid-100.tablet-grid-50.grid-40(i18n-text='i18n.htmlStrings.title') Transmission Web Interface
 			p.mobile-grid-100.tablet-grid-50.grid-60.additionalData
-				span.statistics STATISTICS
-				span.bandwidth BANDWIDTH
-				// span.timeNow DATE
+				span.statistics(i18n-text='i18n.htmlStrings.topBar.statistics')
+				span.bandwidth(i18n-text='i18n.htmlStrings.topBar.bandwidth')
+				// span.timeNow(i18n-text='i18n.htmlStrings.topBar.date') DATE
 
 		section.header.blue.darken-2
-			span Filter torrents by... 
+			span(i18n-text='i18n.htmlStrings.filterOptions.text') Filter torrents by... 
 
 			ul
 				li.active(data-href='all')
-					a All
+					a(i18n-text='i18n.htmlStrings.filterOptions.all') All
 				li(data-href='downloading')
-					a Downloading
+					a(i18n-text='i18n.htmlStrings.filterOptions.downloading') Downloading
 				li(data-href='seeding')
-					a Seeding
+					a(i18n-text='i18n.htmlStrings.filterOptions.seeding') Seeding
 				li(data-href='idling')
-					a Idling
+					a(i18n-text='i18n.htmlStrings.filterOptions.idling') Idling
 				li(data-href='queued')
-					a Queued
+					a(i18n-text='i18n.htmlStrings.filterOptions.queued') Queued
 				li(data-href='paused')
-					a Paused
+					a(i18n-text='i18n.htmlStrings.filterOptions.paused') Paused
 				li(data-href='errored').hidden
-					a Errored
+					a(i18n-text='i18n.htmlStrings.filterOptions.hidden') Errored
 
 		section.torrentPagination
 			button.btn.waves-button.waves-effect.white.previousPage.black-text
 				i.material-icons.left keyboard_arrow_left
-				| Prev Page
+				span(i18n-text='i18n.htmlStrings.pagination.previousPage') Prev Page
 			a.btn.waves-button.waves-effect.cyan.darken-1.pageInfo.white-text.tooltipped.modal-trigger(href='#viewOptions' data-position='bottom' data-delay='50' data-tooltip='Click to modify view options')
-				| Page 
+				span(i18n-text='i18n.htmlStrings.pagination.page' i18n-text-after=' ') Page 
 				span.currentPage
-				|  of 
+				span(i18n-text='i18n.htmlStrings.pagination.of' i18n-text-before=' ' i18n-text-after=' ')  of 
 				span.totalPages
 			button.btn.waves-button.waves-effect.white.nextPage.black-text
 				i.material-icons.right keyboard_arrow_right
-				| Next Page
+				span(i18n-text='i18n.htmlStrings.pagination.nextPage') Next Page
 
 		section.torrentSearch.grid-container
 			section.input-field
 				input.search.mobile-grid-100.tablet-grid-100.grid-100.white-text#search(type='text' autocomplete='off')
-				label(for='search') Search Torrent...
+				label(for='search' i18n-text='i18n.htmlStrings.searchTorrent') Search Torrent...
 
 		section.parachute.hidden
 
@@ -98,7 +98,7 @@ html
 			section.torrentInformation
 				section.head
 					h3
-						| Torrent Information
+						span(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.torrentInformation') Torrent Information
 						span.showOnMobile
 							|  - 
 							span.torrentName
@@ -108,116 +108,116 @@ html
 
 					ul.tabs.tabs-fixed-width
 						li.tab
-							a(href='#information').active Information
+							a(href='#information' i18n-text='i18n.htmlStrings.sidebarView.tabs.information.title').active Information
 						li.tab
-							a(href='#activity') Activity
+							a(href='#activity' i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.title') Activity
 						li.tab
-							a(href='#trackers') Trackers
+							a(href='#trackers' i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.title') Trackers
 						li.tab
-							a(href='#peers') Peers
+							a(href='#peers' i18n-text='i18n.htmlStrings.sidebarView.tabs.peers.title') Peers
 						li.tab
-							a(href='#files') Files
+							a(href='#files' i18n-text='i18n.htmlStrings.sidebarView.tabs.files.title') Files
 						li.tab
-							a(href='#options') Options
+							a(href='#options' i18n-text='i18n.htmlStrings.sidebarView.tabs.options.title') Options
 
 				section.tabContent
 					section#information
 						table
 							tr
-								td Size:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.size') Size:
 								td.size
 							tr
-								td Pieces:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.pieces') Pieces:
 								td.pieces
 							tr
-								td Hash:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.hash') Hash:
 								td.hash
 							tr
-								td Type:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.type.title') Type:
 								td.type
 							tr
-								td Comment:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.comment') Comment:
 								td.comment
 							tr
-								td Created with:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.information.createdWith') Created with:
 								td.createdWith
 
 					section#activity
 						table
 							tr
-								td Status:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.status' i18n-text-after=':') Status:
 								td.status
 							tr
-								td Progress:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.progress' i18n-text-after=':') Progress:
 								td.torrentProgress
 							tr
-								td Downloaded:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.downloaded' i18n-text-after=':') Downloaded:
 								td.downloaded
 							tr
-								td Uploaded:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.uploaded' i18n-text-after=':') Uploaded:
 								td.uploaded
 							tr
-								td Ratio:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.ratio' i18n-text-after=':') Ratio:
 								td.ratio
 							tr
-								td Download Speed:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.downloadSpeed' i18n-text-after=':') Download Speed:
 								td
 									span.downloadSpeed
-									|  (from 
+									span(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.from' i18n-text-before=' (' i18n-text-after=' ') (from 
 									span.downloadPeers
-									|  peers)
+									span(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.peers' i18n-text-before=' ' i18n-text-after=')') peers)
 							tr
-								td Upload Speed:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.uploadSpeed' i18n-text-after=':') Upload Speed:
 								td
 									span.uploadSpeed
-									|  (from 
+									span(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.from' i18n-text-before=' (' i18n-text-after=' ') (from 
 									span.uploadPeers
-									|  peers)					
+									span(i18n-text='i18n.htmlStrings.sidebarView.tabs.activity.peers' i18n-text-before=' ' i18n-text-after=')') peers)
 
 					section#trackers
 						section.trackerSearch
 							section.input-field
 								input.search#search(type='text' autocomplete='off')
-								label(for='search') Search Tracker...
+								label(for='search' i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.searchTracker' i18n-text-after='...') Search tracker...
 
 						section.trackers
 
 					section#peers
 						table
 							tr
-								th.ipAddress IP Address
-								th.client Client
-								th.percentageDone %
-								th.uploading Uploading
-								th.downloading Downloading
+								th.ipAddress(i18n-text='i18n.htmlStrings.sidebarView.tabs.peers.ipAddress') IP Address
+								th.client(i18n-text='i18n.htmlStrings.sidebarView.tabs.peers.client') Client
+								th.percentageDone(i18n-text='i18n.htmlStrings.sidebarView.tabs.peers.percentageDone') %
+								th.uploading(i18n-text='i18n.htmlStrings.sidebarView.tabs.peers.uploading') Uploading
+								th.downloading(i18n-text='i18n.htmlStrings.sidebarView.tabs.peers.downloading') Downloading
 
 					section#files
 
 					section#options
 						table
 							tr
-								td Download Directory:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.downloadDirectory' i18n-text-after=':') Download Directory:
 								td 
 									input(type='text' placeholder='Download Directory').downloadDirectory
 							tr
-								td Priority:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.priority' 18n-text-after=':') Priority:
 								td.priorityContainer
 									span
 										input#low(name='priority' type='radio').priority
-										label(for='low') Low
+										label(for='low' i18n-text='i18n.htmlStrings.sidebarView.tabs.options.low') Low
 									span
 										input#normal(name='priority' type='radio').priority
-										label(for='normal') Normal
+										label(for='normal' i18n-text='i18n.htmlStrings.sidebarView.tabs.options.normal') Normal
 									span
 										input#high(name='priority' type='radio').priority
-										label(for='high') High
+										label(for='high' i18n-text='i18n.htmlStrings.sidebarView.tabs.options.high') High
 
 							tr
-								td Stop Seeding At:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.stopSeedingAt' i18n-text-after=':') Stop Seeding At:
 								td 
 									input(type='text' placeholder='Stop Seeding At').stopSeedingAt
 							tr
-								td Limit Download Speed:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.limitDownloadSpeed' i18n-text-after=':') Limit Download Speed:
 								td
 									.switch.downloadSpeedToggle
 										label
@@ -228,7 +228,7 @@ html
 									input(type='text' placeholder='Limit Download Speed').downloadSpeed
 									|  kB/s
 							tr
-								td Limit Upload Speed:
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.limitUploadSpeed' i18n-text-after=':') Limit Upload Speed:
 								td
 									.switch.uploadSpeedToggle
 										label
@@ -239,93 +239,93 @@ html
 									input(type='text' placeholder='Limit Upload Speed').uploadSpeed
 									|  kB/s
 							tr
-								td Maximum Connections
+								td(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.maximumConnections' i18n-text-after=':') Maximum Connections:
 								td
 									input(type='text').maxConnections
 
-						a.btn.waves-button.waves-effect.teal.saveChanges Save Changes
+						a.btn.waves-button.waves-effect.teal.saveChanges(i18n-text='i18n.htmlStrings.sidebarView.tabs.options.saveChanges') Save Changes
 
 			section.settings
 				section.head
-					h3 Settings
+					h3(i18n-text='i18n.htmlStrings.sidebarView.settings.title') Settings
 					span.closeTab
 
 				table
 
-				a.btn.waves-button.waves-effect.teal.updateSettingsButton Save Settings
+				a.btn.waves-button.waves-effect.teal.updateSettingsButton(i18n-text='i18n.htmlStrings.sidebarView.settings.saveSettings') Save Settings
 
 			section.statistics
 				section.head 
-					h3 Statistics
+					h3(i18n-text='i18n.htmlStrings.sidebarView.statistics.title') Statistics
 					span.closeTab
 
 				table
 					tr
-						td Active Torrents:
+						td(i18n-text='i18n.htmlStrings.sidebarView.statistics.activeTorrents' i18n-text-after=':') Active Torrents:
 						td.activeTorrents
 					tr
-						td Paused Torrents:
+						td(i18n-text='i18n.htmlStrings.sidebarView.statistics.pausedTorrents' i18n-text-after=':') Paused Torrents:
 						td.pausedTorrents
 					tr
-						td Total Downloaded:
+						td(i18n-text='i18n.htmlStrings.sidebarView.statistics.totalDownloaded' i18n-text-after=':') Total Downloaded:
 						td.totalDownloaded
 					tr
-						td Total Uploaded:
+						td(i18n-text='i18n.htmlStrings.sidebarView.statistics.totalUploaded' i18n-text-after=':') Total Uploaded:
 						td.totalUploaded
 					tr
-						td Ratio:
+						td(i18n-text='i18n.htmlStrings.sidebarView.statistics.ratio' i18n-text-after=':') Ratio:
 						td.ratio
 					tr
-						td Uptime:
+						td(i18n-text='i18n.htmlStrings.sidebarView.statistics.uptime' i18n-text-after=':') Uptime:
 						td.uptime
 
 			section.addTorrent
 				section.head
-					h3 Add Torrent...
+					h3(i18n-text='i18n.htmlStrings.sidebarView.addTorrent.title') Add Torrent...
 				section.addTorrentForm
 					section.file-field.input-field.grid-container
 						.btn
-							span File
+							span(i18n-text='i18n.htmlStrings.sidebarView.addTorrent.file') File
 							input(type='file' multiple).torrentFile
 						.file-path-wrapper
-							input.file-path.validate(type='text' placeholder='Select one or more .torrent files').torrentFilePathDisplay.grid-50
+							input.file-path.validate(type='text' placeholder='Select one or more .torrent files' i18n.htmlStrings-placeholder='i18n.htmlStrings.sidebarView.addTorrent.selectPlaceholder').torrentFilePathDisplay.grid-50
 					
 					section.input-field
 						input(name='torrentLink' placeholder='optional').torrentLink#torrentLink
-						label(for='torrentLink').active Torrent URL or magnet: Link
+						label(for='torrentLink' i18n-text='i18n.htmlStrings.sidebarView.addTorrent.urlLabel').active Torrent URL or magnet: link
 					
 					section.input-field
 						input(name='torrentDirectory' placeholder='Leave empty for blank').torrentDirectory#torrentDirectory
-						label(for='torrentDirectory').active Destination Directory
+						label(for='torrentDirectory' i18n-text='i18n.htmlStrings.sidebarView.addTorrent.destinationDirectory').active Destination Directory
 					
 					p
 						input(type='checkbox')#startAutomatically
-						label(for='startAutomatically' checked) Start Automatically
+						label(for='startAutomatically' checked i18n-text='i18n.htmlStrings.sidebarView.addTorrent.startAutomatically') Start Automatically
 
 					section.buttonTray
-						a.btn.waves-button.waves-effect.addTorrent Add Torrent
+						a.btn.waves-button.waves-effect.addTorrent(i18n-text='i18n.htmlStrings.sidebarView.addTorrent.title') Add Torrent
 
 			section.removeTorrent
 				section.head
-					h3 Remove Torrent...
+					h3(i18n-text='i18n.htmlStrings.sidebarView.removeTorrent.title' i18n-text-after='...') Remove Torrent...
 				section.removeTorrentForm
 					p
-						| Are you sure that you would like to remove 
+						span(i18n-text='i18n.htmlStrings.sidebarView.removeTorrent.title') Are you sure that you would like to remove 
 						span.torrentString
-						|  torrent
-						span.plural s
+						span(i18n-text='i18n.htmlStrings.sidebarView.removeTorrent.torrent' i18n-text-before=' ')  torrent
+						span.plural(i18n-text='i18n.htmlStrings.sidebarView.removeTorrent.torrentPlural') s
 						| ?
 
 					input(type='checkbox')#deleteAllData
 					label(for='deleteAllData' checked) Delete All Data
 					section.buttonTray
 						a.btn.waves-button.waves-effect.removeTorrent
-							| Remove torrent
-							span.plural s
+							span(i18n-text='i18n.htmlStrings.sidebarView.removeTorrent.title') Remove torrent
+							span.plural(i18n-text='i18n.htmlStrings.sidebarView.removeTorrent.torrentPlural') s
 
 			section.credits
 				section.head
-					h3 Credits
+					h3(i18n-text='i18n.htmlStrings.sidebarView.credits.title') Credits
 
 				section.body.grid-container
 					section.grid-33
@@ -334,7 +334,7 @@ html
 							| Edwin A. 
 							a(href='https://theroyalstudent.com') (@theroyalstudent)
 					section.grid-66
-						h5 Special Thanks:
+						h5(i18n-text='i18n.htmlStrings.sidebarView.credits.specialThanks') Special Thanks:
 						ul
 							li 
 								a(href='http://bourbon.io') Bourbon
@@ -359,7 +359,7 @@ html
 			section.clickToClose
 				section
 					i.material-icons close
-					h2 Click to close
+					h2(i18n-text='i18n.htmlStrings.sidebarOverflow.clickToClose') Click to close
 
 		section.elements.hidden
 			section.torrent.card.mobile-grid-100.tablet-grid-40.grid-48.unset.default
@@ -385,6 +385,47 @@ html
 					a.getMoreDetails More Details...
 					a.selectTorrent Select...
 
+			section.tracker.unset
+				h4.host
+				table
+					tr
+						td(i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.tracker.lastAnnounced') Last Announced:
+						td.lastAnnounced
+					tr
+						td(i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.tracker.nextAnnounced') Next Announced:
+						td.nextAnnounced
+					tr
+						td(i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.tracker.lastScrape') Last Scrape:
+						td.lastScrape
+					tr
+						td(i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.tracker.seeders') Seeders:
+						td.seeders
+					tr
+						td(i18n-text='i18n.htmlStrings.sidebarView.tabs.trackers.tracker.leechers') Leechers:
+						td.leechers
+
+			table
+				tr.peer.unset
+					td
+					td
+					td
+					td
+					td
+
+			section.file.unset
+				h4
+					span
+					span.download
+						input(type='checkbox')
+						label Download
+				table
+					tr
+						td Completed:
+						td.completed
+
+			select
+				option.language.unset
+
 		section.modals
 			section.modal#viewOptions
 				section.modal-content
@@ -402,20 +443,29 @@ html
 					br
 
 					section.input-field
+						select.torrentsPerPage#torrentsPerPage
+							option(value='2') 2
+							option(value='10') 10
+							option(value='20') 
+								| 20 
+								span(i18n-text='i18n.htmlStrings.viewOptions.default' i18n-text-before='(' i18n-text-after=')') (default)
+							option(value='50') 50
+							option(value='100') 100
+							option(value='900719925474099' i18n-text='i18n.htmlStrings.viewOptions.all') All
+						label(i18n-text='i18n.htmlStrings.viewOptions.torrentsPerPage' for='torrentsPerPage') Torrents Per Page
+
+					br
+
+					section.input-field
 						select.page#pageSelector
 						label(for='pageSelector') Page #
 
 					br
 
 					section.input-field
-						select.viewPerPage#viewPerPage
-							option(value='2') 2
-							option(value='10') 10
-							option(value='20') 20 (default)
-							option(value='50') 50
-							option(value='100') 100
-							option(value='900719925474099') All
-						label(for='viewPerPage') Torrents Per Page
+						select.language#language
+							option(value='en') English
+						label(i18n-text='i18n.htmlStrings.viewOptions.language' for='language') Language
 
 				section.modal-footer
 					a.modal-action.modal-close.waves-effect.waves-dark.btn-flat(href='#!') Go
