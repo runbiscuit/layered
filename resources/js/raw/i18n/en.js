@@ -49,6 +49,7 @@ var en = {
 		downloading: 'Downloading',
 		downloadedQueuedForSeeding: 'Downloaded, queued for seeding',
 		seeding: 'Seeding',
+		error: 'Error',
 		unknown: 'Unknown'
 	},
 

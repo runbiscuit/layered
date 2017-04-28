@@ -436,7 +436,7 @@ var Listener = {
 				torrentMessageElement.text(i18n.event.error);
 			}
 
-			torrentMessageElement.text(torrentMessageElement.text() + torrent.errorString + ' [#' + torrent.error + ']');
+			torrentMessageElement.text(i18n.event.error + ': ' + torrent.errorString + ' [#' + torrent.error + ']');
 			torrentElement.removeClass('default paused queued downloading seeding idling errored').addClass('errored');
 		}
 
