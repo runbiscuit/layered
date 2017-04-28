@@ -624,8 +624,8 @@ var Listener = {
 				}
 			});
 
-			if (errored) { $('section.header ul li[data-href="errored"]').fadeIn(); }
-			else { $('section.header ul li[data-href="errored"]').fadeOut(); }
+			if (errored) { $('section.header ul li[data-href="errored"]').css('visibility', 'visible'); }
+			else { $('section.header ul li[data-href="errored"]').css('visibility', 'hidden'); }
 
 			Listener.batchOperations();
 			Listener.getMoreTorrentDetails();
