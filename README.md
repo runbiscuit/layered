@@ -2,7 +2,7 @@
 Complete rewrite of the Transmission Web Interface with Material Design,
 using [jQuery](https://jquery.com), [MaterializeCSS](http://materializecss.com/) and [Unsemantic CSS Framework](http://unsemantic.com/).
 
-Current version: _v2.0-beta3 - major performance improvements, list/grid view, skip to page, torrents per page and torrent download directory_
+Current version: _v2.0-beta4 - added internationalization support_
 
 ## Screenshots
 ### Desktop
