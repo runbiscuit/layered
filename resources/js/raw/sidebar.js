@@ -121,11 +121,11 @@ var TorrentSidebar = {
 			});
 
 			$.each(torrent.files, function(index, file) {
-				var fileElement = 'section.sidebar section.torrentInformation section#files section.file[data-id="' + file + '"]';
+				var fileElement = 'section.sidebar section.torrentInformation section#files section.file[data-id="' + index + '"]';
 
 				if (!$(fileElement).length) {
 					$('section.elements section.file.unset').clone().appendTo('section.sidebar section.torrentInformation section#files');
-					$('section.sidebar section.torrentInformation section#files section.file.unset').attr('data-id', file);
+					$('section.sidebar section.torrentInformation section#files section.file.unset').attr('data-id', index);
 
 					$(fileElement + ' span.download input[type="checkbox"]').attr('id', 'downloadfile' + index).attr('data-torrentid', torrent.id).attr('data-fileid', index);
 					$(fileElement + ' span.download label').attr('for', 'downloadfile' + index);
