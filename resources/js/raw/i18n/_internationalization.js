@@ -1,6 +1,6 @@
 var i18n;
 
-var Internationalizations = {
+var Internationalization = {
 	setSupportedLanguages: function() {
 		// figure out what languages are supported
 		$('section.modal#viewOptions select.language').html('');
